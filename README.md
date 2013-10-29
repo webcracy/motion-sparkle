@@ -90,7 +90,7 @@ Tips:
 * add it go your .gitignore or equivalent 
 * make a backup of it
 
-### Run `rake:setup` at any moment to make sure your config is OK
+### Run `rake sparkle:setup` at any moment to make sure your config is OK
 
 When all is good, move forward. If you need help, you can always open an issue on Github.
 
