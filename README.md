@@ -4,7 +4,7 @@
 
 ## Overview
 
-[Sparkle](http://sparkle.andymatuschak.org/) is a free auto-updater library for Cocoa apps. It powers countless Mac application's "Check for updates" feature, as it takes care of all the process automatically, is very easy to integrate and is secure.
+[Sparkle](http://sparkle.andymatuschak.org/) is a free auto-updater library for Cocoa apps. It powers countless Mac applications' "Check for updates" feature, as it takes care of all the process automatically, is very easy to integrate and is secure.
 
 In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
@@ -16,9 +16,11 @@ After building your app for release and running `rake sparkle:package`, all you 
 
 In your project's Gemfile, add:
 
-`gem motion-sparkle`
+    gem 'motion-sparkle'
 
-and then run `$ bundle install`
+and then run 
+
+    $ bundle install
 
 ## Settings configuration
 
@@ -146,7 +148,7 @@ To do so, follow the same steps every time:
 
 ### 2. Build your app for release
 
-`$ rake build:release`
+    $ rake build:release
 
 ### 3. Update your Release Notes
 
