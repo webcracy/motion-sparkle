@@ -1,8 +1,10 @@
-# Using motion-sparkle to add Sparkle to your Rubymotion project
+# motion-sparkle
+
+Easily package and release updates of your RubyMotion app with Sparkle.
 
 *NB: Sparkle only works for OS X projects*
 
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+**Table of Contents**
 
 - [Overview](#overview)
 - [Installation](#installation)
@@ -215,11 +217,11 @@ I've made a list of features that I look forward to having. You can attack those
 
 Wanted features:
 
-  - [ ]  Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
-  - [ ]  Configurable build targets (only :release supported currently)
-  - [ ]  Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
-  - [ ]  Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
-  - [ ]  Textile / Markdown for release note templates
+  - [ ]  Issue #1 - Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
+  - [ ]  Issue #2 - Configurable build targets (only :release supported currently)
+  - [ ]  Issue #3 - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
+  - [ ]  Issue #4 - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
+  - [ ]  Textile / Markdown for release note templates if possible
   - [ ]  Ruby 1.8.7, Ruby 1.9.2, Ruby 2.0 compatibility
   - [ ]  Better test coverage
 
