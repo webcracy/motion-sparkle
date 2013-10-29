@@ -217,10 +217,10 @@ I've made a list of features that I look forward to having. You can attack those
 
 Wanted features:
 
-  - [ ]  Issue #1 - Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
-  - [ ]  Issue #2 - Configurable build targets (only :release supported currently)
-  - [ ]  Issue #3 - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
-  - [ ]  Issue #4 - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
+  - [ ]  [Issue #1](https://github.com/webcracy/motion-sparkle/issues/1) - Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
+  - [ ]  [Issue #2](https://github.com/webcracy/motion-sparkle/issues/2) - Configurable build targets (only :release supported currently)
+  - [ ]  [Issue #3](https://github.com/webcracy/motion-sparkle/issues/3) - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
+  - [ ]  [Issue #4](https://github.com/webcracy/motion-sparkle/issues/4) - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
   - [ ]  Textile / Markdown for release note templates if possible
   - [ ]  Ruby 1.8.7, Ruby 1.9.2, Ruby 2.0 compatibility
   - [ ]  Better test coverage
@@ -235,7 +235,7 @@ Author: Alexandre L. Solleiro
 * Github - http://github.com/webcracy
 * Website - http://webcracy.org
 
-Thanks to the authors and contributors of [HipByte/motion-cocoapods]:(https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
+Thanks to the authors and contributors of [HipByte/motion-cocoapods](https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
 
 And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)! 
 
