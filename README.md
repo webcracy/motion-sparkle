@@ -2,6 +2,30 @@
 
 *NB: Sparkle only works for OS X projects*
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Settings configuration](#settings-configuration)
+- [Certificate configuration](#certificate-configuration)
+	- [Generate new certificates](#generate-new-certificates)
+	- [Use your existing certificates](#use-your-existing-certificates)
+	- [Notes about the public certificate](#notes-about-the-public-certificate)
+	- [Notes about the private certificate](#notes-about-the-private-certificate)
+	- [Warning regarding your private certificate](#warning-regarding-your-private-certificate)
+	- [Run rake sparkle:setup at any moment to make sure your config is OK](#run-rake-sparklesetup-at-any-moment-to-make-sure-your-config-is-ok)
+- [Adding "Check for updates..." to the menu](#adding-check-for-updates-to-the-menu)
+- [First publication](#first-publication)
+- [Releasing updates](#releasing-updates)
+	- [1. Bump the version](#1-bump-the-version)
+	- [2. Build your app for release](#2-build-your-app-for-release)
+	- [3. Update your Release Notes](#3-update-your-release-notes)
+	- [4. Package the release](#4-package-the-release)
+	- [5. Upload](#5-upload)
+- [Help, Limitations, Troubleshooting and Testing](#help-limitations-troubleshooting-and-testing)
+- [Contributing](#contributing)
+- [Credits](#credits)
+
 ## Overview
 
 [Sparkle](http://sparkle.andymatuschak.org/) powers countless Mac applications' "Check for updates" feature. In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
@@ -185,6 +209,10 @@ Test coverage currently only extends to configuration and certificate generation
 
 ## Contributing
 
+Please do help with comments, issues and pull requests! 
+
+I've made a list of features that I look forward to having. You can attack those or suprise me :)
+
 Wanted features:
 
   - [ ]  Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
@@ -195,12 +223,17 @@ Wanted features:
   - [ ]  Ruby 1.8.7, Ruby 1.9.2, Ruby 2.0 compatibility
   - [ ]  Better test coverage
 
+Thanks!
+
 ## Credits
 
 Author: Alexandre L. Solleiro
 
-* Follow me on Twitter - http://twitter.com/als, 
-* Fork my code on Github - http://github.com/webcracy, 
-* More info on my website - http://webcracy.org
+* Twitter - http://twitter.com/als
+* Github - http://github.com/webcracy
+* Website - http://webcracy.org
 
-Thanks: Authors and contributors of HipByte/motion-cocoapods, drnic/choctop gems and of course andymatuschak/Sparkle. Their code has made this easier.
+Thanks to the authors and contributors of [HipByte/motion-cocoapods]:(https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
+
+And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)! 
+
