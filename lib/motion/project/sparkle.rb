@@ -63,6 +63,22 @@ module Motion::Project
 
     # File manipulation and certificates
 
+    def add_to_gitignore
+      @ignorable = ['sparkle/release','sparkle/release/*','sparkle/config/dsa_priv.pem']
+      return unless File.exist?(gitignore_path)
+      File.open(gitignore_path, 'r') do |f|
+        f.each_line do |line|
+          @ignorable.delete(line) if @ignorable.include?(line)
+        end
+      end
+      File.open(gitignore_path, 'a') do |f|  
+        @ignorable.each do |i|
+          f << "#{i}\n"
+        end 
+      end if @ignorable.any?
+      `cat #{gitignore_path}`
+    end
+
     def create_sparkle_folder
       create_config_folder
       create_release_folder
@@ -100,7 +116,7 @@ Details:
   *  Private certificate: ./#{private_key_path}
   *  Public certificate: ./#{public_key_path}
 Warning:
-ADD YOUR PRIVATE CERTIFICATE TO YOUR GITIGNORE OR EQUIVALENT AND BACK IT UP!
+ADD YOUR PRIVATE CERTIFICATE TO YOUR `.gitignore` OR EQUIVALENT AND BACK IT UP!
 KEEP IT PRIVATE AND SAFE!
 If you lose it, your users will be unable to upgrade.
       "
@@ -118,6 +134,10 @@ If you lose it, your users will be unable to upgrade.
 
     def project_path
       @project_path ||= Pathname.new(@config.project_dir)
+    end
+
+    def gitignore_path
+      project_path + ".gitignore"  
     end
 
     def sparkle_release_path

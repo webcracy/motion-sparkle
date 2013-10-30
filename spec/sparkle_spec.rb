@@ -13,7 +13,9 @@ describe "motion-sparkle" do
     unless @completed_setup
       teardown_temporary_directory
       setup_temporary_directory
+      
       FileUtils.mkdir_p(temporary_directory + 'resources')
+      FileUtils.touch(temporary_directory + '.gitignore')
 
       @config = App.config
       @config.project_dir = temporary_directory.to_s
@@ -69,6 +71,11 @@ describe "motion-sparkle" do
   it "should create public certificate" do
     puts @config.sparkle.public_key_path.to_s
     File.exist?(@config.sparkle.public_key_path.to_s).should.equal true
+  end
+
+  it "should add files to gitignore" do
+    a = `cat .gitignore`
+    a.strip.should.not.equal ''
   end
 
 end

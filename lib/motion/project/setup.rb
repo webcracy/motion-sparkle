@@ -50,6 +50,7 @@ module Motion::Project
 
     def setup
       create_sparkle_folder
+      add_to_gitignore
       copy_templates
       if config_ok?
         App.info "Sparkle", "Config found"
