@@ -1,14 +1,38 @@
-# Using motion-sparkle to add Sparkle to your Rubymotion project
+# motion-sparkle
+
+Easily package and release updates of your RubyMotion app with Sparkle.
 
 *NB: Sparkle only works for OS X projects*
 
+**Table of Contents**
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Settings configuration](#settings-configuration)
+- [Certificate configuration](#certificate-configuration)
+	- [Generate new certificates](#generate-new-certificates)
+	- [Use your existing certificates](#use-your-existing-certificates)
+	- [Notes about the public certificate](#notes-about-the-public-certificate)
+	- [Notes about the private certificate](#notes-about-the-private-certificate)
+	- [Warning regarding your private certificate](#warning-regarding-your-private-certificate)
+	- [Run rake sparkle:setup at any moment to make sure your config is OK](#run-rake-sparklesetup-at-any-moment-to-make-sure-your-config-is-ok)
+- [Adding "Check for updates..." to the menu](#adding-check-for-updates-to-the-menu)
+- [First publication](#first-publication)
+- [Releasing updates](#releasing-updates)
+	- [1. Bump the version](#1-bump-the-version)
+	- [2. Build your app for release](#2-build-your-app-for-release)
+	- [3. Update your Release Notes](#3-update-your-release-notes)
+	- [4. Package the release](#4-package-the-release)
+	- [5. Upload](#5-upload)
+- [Help, Limitations, Troubleshooting and Testing](#help-limitations-troubleshooting-and-testing)
+- [Contributing](#contributing)
+- [Credits](#credits)
+
 ## Overview
 
-[Sparkle](http://sparkle.andymatuschak.org/) is a free auto-updater library for Cocoa apps. It powers countless Mac application's "Check for updates" feature, as it takes care of all the process automatically, is very easy to integrate and is secure.
+[Sparkle](http://sparkle.andymatuschak.org/) powers countless Mac applications' "Check for updates" feature. In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
-In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
-
-While it's easy to use Sparkle with RubyMotion without motion-sparkle, using it makes it even easier. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating the ZIP file, XML and release notes for you.
+While it's easy to use Sparkle with RubyMotion without motion-sparkle, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating a ZIP file, XML and release notes for you.
 
 After building your app for release and running `rake sparkle:package`, all you need to do is upload 3 files to an URL you specified in the Rakefile and your users will be able to get the new release.
 
@@ -16,9 +40,11 @@ After building your app for release and running `rake sparkle:package`, all you 
 
 In your project's Gemfile, add:
 
-`gem motion-sparkle`
+    gem 'motion-sparkle'
 
-and then run `$ bundle install`
+and then run 
+
+    $ bundle install
 
 ## Settings configuration
 
@@ -52,11 +78,11 @@ If everything is OK, you should be informed that it's time to generate or config
 
 ## Certificate configuration
 
-For security, Sparkle allows you to sign your releases with a private certificate before distribution. In a few words: when the user tries to install an update, Sparkle will check the package using the signature provided in the XML file and the public certificate contained in the running application.
+For security, Sparkle allows you to sign your releases with a private certificate before distribution: when the user tries to install an update, Sparkle will check the package using the signature provided in the XML file and the public certificate contained in the running application.
 
-motion-sparkle makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you and is all handled when you run `rake sparkle:package`.
+motion-sparkle makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
 
-You have two options: have Sparkle generate the certificates for you, or follow the instructions.
+You have two options: have Sparkle generate the certificates for you, or follow the instructions to use your existing ones.
 
 ### Generate new certificates
 
@@ -85,10 +111,10 @@ The private certificate cannot be renamed nor placed elsewhere. If you have an e
 Be careful when handling the private certificate: you should never lose it nor share it. If you do, you'd lose the ability to sign your packages and users wouldn't be able to update your app. If someone takes it, they could sign the packages in your name and have your users install who knows what.
 
 Tips: 
-* add it go your .gitignore or equivalent 
+* add it go your `.gitignore` or equivalent 
 * make a backup of it
 
-### Run `rake:setup` at any moment to make sure your config is OK
+### Run `rake sparkle:setup` at any moment to make sure your config is OK
 
 When all is good, move forward. If you need help, you can always open an issue on Github.
 
@@ -96,11 +122,11 @@ When all is good, move forward. If you need help, you can always open an issue o
 
 Sparkle makes it incredibly easy to add a "Check for updates" feature to your app. 
 
-The `SUUpdater` class has a shared updater instance that you can use as a `target` for the different actions Sparkle provides. To launch the typical Sparkle flow, you need only to call the `checkForUpdates:` action. 
+Sparkle's `SUUpdater` class has a shared updater instance that can serve as a `target` for Sparkle actions. To launch the typical Sparkle flow, call the `checkForUpdates:` action. 
 
-So, running `SUUpdater.new.checkForUpdates` will launch the "Check for updates" flow.
+So, to launch the "Check for updates" flow, you can call `SUUpdater.new.checkForUpdates`.
 
-Here's an example based on the Rubymotion default OS X app example, "Hello". 
+Here's an example based on the RubyMotion default OS X app example, "Hello". You can check out Sparkle's documentation for more details and further ways to customize the experience.
 
 This will add the classic "Check for updates..." entry on the menu; when the user clicks it, the nice default of experience of Sparkle will begin.
 
@@ -110,19 +136,19 @@ In `menu.rb`, right below the line that adds the "Preferences" item:
     sparkle.setTarget SUUpdater.new
     sparkle.setAction 'checkForUpdates:'
 
-Once you build your application, you should be able to see a "Check for updates..." item in the Application menu. It should work but would still produce an error at this point. Keep going to make it all work.
-
-Check out Sparkle's documentation for more details and further ways to customize the experience.
+Once you build your application, you should be able to see a "Check for updates..." item in the Application menu. Using it will work but will quickly produce an error. Keep going to make it work.
 
 ## First publication
 
-Before you build, make sure you've set your `:base_url` to a destination where you can upload/download your files. Note that packaging with motion-sparkle only works with the `:release` target at the moment, so make sure your build with be compatible with `rake build:release`.
+Before you build, make sure you've set your `:base_url` to a destination where you can upload/download your files. 
 
-Run the setup command
+Note that packaging with motion-sparkle only works with the `:release` target at the moment, so make sure your build with be compatible with `rake build:release`.
+
+Run the setup command again to make sure it's all good:
 
     $ rake sparkle:setup
 
-If you're ready to go, you should probably add 
+If you're ready to go, run the `sparkle:package` task:
 
     $ rake sparkle:package
 
@@ -146,7 +172,7 @@ To do so, follow the same steps every time:
 
 ### 2. Build your app for release
 
-`$ rake build:release`
+    $ rake build:release
 
 ### 3. Update your Release Notes
 
@@ -185,22 +211,31 @@ Test coverage currently only extends to configuration and certificate generation
 
 ## Contributing
 
+Please do help with comments, issues and pull requests! 
+
+I've made a list of features that I look forward to having. You can attack those or suprise me :)
+
 Wanted features:
 
-  - [ ]  Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
-  - [ ]  Configurable build targets (only :release supported currently)
-  - [ ]  Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
-  - [ ]  Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
-  - [ ]  Textile / Markdown for release note templates
+  - [ ]  [Issue #1](https://github.com/webcracy/motion-sparkle/issues/1) - Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
+  - [ ]  [Issue #2](https://github.com/webcracy/motion-sparkle/issues/2) - Configurable build targets (only :release supported currently)
+  - [ ]  [Issue #3](https://github.com/webcracy/motion-sparkle/issues/3) - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
+  - [ ]  [Issue #4](https://github.com/webcracy/motion-sparkle/issues/4) - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
+  - [ ]  Textile / Markdown for release note templates if possible
   - [ ]  Ruby 1.8.7, Ruby 1.9.2, Ruby 2.0 compatibility
   - [ ]  Better test coverage
+
+Thanks!
 
 ## Credits
 
 Author: Alexandre L. Solleiro
 
-* Follow me on Twitter - http://twitter.com/als, 
-* Fork my code on Github - http://github.com/webcracy, 
-* More info on my website - http://webcracy.org
+* Twitter - http://twitter.com/als
+* Github - http://github.com/webcracy
+* Website - http://webcracy.org
 
-Thanks: Authors and contributors of HipByte/motion-cocoapods, drnic/choctop gems and of course andymatuschak/Sparkle. Their code has made this easier.
+Thanks to the authors and contributors of [HipByte/motion-cocoapods](https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
+
+And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)! 
+
