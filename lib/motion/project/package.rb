@@ -24,7 +24,7 @@ module Motion::Project
         App.fail "Release already exists at ./#{sparkle_release_path}/#{zip_file} (remove it manually with `rake sparkle:clean`)"
       end
       FileUtils.cd(app_release_path) do
-        `zip -r "#{zip_file}" "#{app_file}"`
+        `zip -r --symlinks "#{zip_file}" "#{app_file}"`
       end
       FileUtils.mv "#{app_release_path}/#{zip_file}", "./#{sparkle_release_path}/"
       App.info "Create", "./#{sparkle_release_path}/#{zip_file}"
