@@ -42,7 +42,7 @@ In your project's Gemfile, add:
 
     gem 'motion-sparkle'
 
-and then run 
+and then run
 
     $ bundle install
 
@@ -51,7 +51,7 @@ and then run
 Configure Sparkle in your `Rakefile` using motion-sparkle's DSL:
 
     # Rakefile
-  
+
     app.sparkle do
       # Required setting
       release :base_url, 'http://example.com/releases/current' # `current` is a folder, don't use a trailing slash
@@ -60,13 +60,14 @@ Configure Sparkle in your `Rakefile` using motion-sparkle's DSL:
       # This will set both your `app.version` and `app.short_version` to the same value
       # It's fine not to use it, just remember to set both as Sparkle needs them
       release :version, '1.0'
-      
+
       # Optional settings and their default values
       release :feed_filename, 'releases.xml'
       release :notes_filename, 'release_notes.html'
+      release :package_url, 'http://downloads.example.com/releases' # defaults to base_url
       release :package_filename, "#{app.name}.zip"
       release :public_key, 'dsa_pub.pem'
-    
+
     end
 
 To complete the configuration, run
@@ -98,11 +99,11 @@ By default, your certificates need to be placed in the following directories:
     ./sparkle/config/dsa_priv.pem   # private certificate
 
 
-### Notes about the public certificate 
+### Notes about the public certificate
 
 The public certificate is placed at the root of the default `resources/` folder by default, as it needs to bundled with your app. If you chose to rename it, remember to set its correct value in the `Rakefile`, using `release :public_key, 'new_name.pem'`.
 
-### Notes about the private certificate 
+### Notes about the private certificate
 
 The private certificate cannot be renamed nor placed elsewhere. If you have an existing certificate, please name it `dsa_priv.pem` and place inside the `sparkle/config/` folder
 
@@ -110,8 +111,8 @@ The private certificate cannot be renamed nor placed elsewhere. If you have an e
 
 Be careful when handling the private certificate: you should never lose it nor share it. If you do, you'd lose the ability to sign your packages and users wouldn't be able to update your app. If someone takes it, they could sign the packages in your name and have your users install who knows what.
 
-Tips: 
-* add it go your `.gitignore` or equivalent 
+Tips:
+* add it go your `.gitignore` or equivalent
 * make a backup of it
 
 ### Run `rake sparkle:setup` at any moment to make sure your config is OK
@@ -120,9 +121,9 @@ When all is good, move forward. If you need help, you can always open an issue o
 
 ## Adding "Check for updates..." to the menu
 
-Sparkle makes it incredibly easy to add a "Check for updates" feature to your app. 
+Sparkle makes it incredibly easy to add a "Check for updates" feature to your app.
 
-Sparkle's `SUUpdater` class has a shared updater instance that can serve as a `target` for Sparkle actions. To launch the typical Sparkle flow, call the `checkForUpdates:` action. 
+Sparkle's `SUUpdater` class has a shared updater instance that can serve as a `target` for Sparkle actions. To launch the typical Sparkle flow, call the `checkForUpdates:` action.
 
 So, to launch the "Check for updates" flow, you can call `SUUpdater.new.checkForUpdates`.
 
@@ -140,7 +141,7 @@ Once you build your application, you should be able to see a "Check for updates.
 
 ## First publication
 
-Before you build, make sure you've set your `:base_url` to a destination where you can upload/download your files. 
+Before you build, make sure you've set your `:base_url` to a destination where you can upload/download your files.
 
 Note that packaging with motion-sparkle only works with the `:release` target at the moment, so make sure your build with be compatible with `rake build:release`.
 
@@ -165,7 +166,7 @@ To do so, follow the same steps every time:
 ### 1. Bump the version
 
     # In your Rakefile
-  
+
     sparkle.app do
       release :version, '1.1' # bump the versions
     end
@@ -188,7 +189,7 @@ Run the `sparkle:package` task and you'll be one step away from distribution.
 
 ### 5. Upload
 
-Upload the 3 files and your new version is up. When users click "Check for updates...", the app should now display your release notes and ask the user to update. And when they do, the app will update and relaunch itself cleanly. 
+Upload the 3 files and your new version is up. When users click "Check for updates...", the app should now display your release notes and ask the user to update. And when they do, the app will update and relaunch itself cleanly.
 
 Sparkle for the win.
 
@@ -211,7 +212,7 @@ Test coverage currently only extends to configuration and certificate generation
 
 ## Contributing
 
-Please do help with comments, issues and pull requests! 
+Please do help with comments, issues and pull requests!
 
 I've made a list of features that I look forward to having. You can attack those or suprise me :)
 
@@ -237,5 +238,5 @@ Author: Alexandre L. Solleiro
 
 Thanks to the authors and contributors of [HipByte/motion-cocoapods](https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
 
-And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)! 
+And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)!
 
