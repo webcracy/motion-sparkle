@@ -64,10 +64,11 @@ Configure Sparkle in your `Rakefile` using motion-sparkle's DSL:
       # Optional settings and their default values
       release :feed_filename, 'releases.xml'
       release :notes_filename, 'release_notes.html'
+      release :public_key, 'dsa_pub.pem'
+      
+      # Packaging
       release :package_url, 'http://downloads.example.com/releases' # defaults to base_url
       release :package_filename, "#{app.name}.zip"
-      release :public_key, 'dsa_pub.pem'
-
     end
 
 To complete the configuration, run
