@@ -30,57 +30,62 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 ## Overview
 
-[Sparkle](http://sparkle.andymatuschak.org/) powers countless Mac applications' "Check for updates" feature. In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
+[Sparkle](http://sparkle.andymatuschak.org/) powers the "Check for updates" feature of countless Mac applications. 
 
-While it's easy to use Sparkle with RubyMotion without motion-sparkle, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating a ZIP file, XML and release notes for you.
+In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for available updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
-After building your app for release and running `rake sparkle:package`, all you need to do is upload 3 files to an URL you specified in the Rakefile and your users will be able to get the new release.
+While it's easy to use Sparkle with RubyMotion without `motion-sparkle`, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating the ZIP, XML and release notes HTML file for you.
+
+After building your app for release and running `rake sparkle:package`, all you need to do is upload 3 files to the URL you specify in the `Rakefile` and your users will be able to get the new release.
 
 ## Installation
 
 In your project's Gemfile, add:
+```ruby
+# Gemfile
 
-    gem 'motion-sparkle'
-
+gem 'motion-sparkle'
+```
 and then run
 
     $ bundle install
 
 ## Settings configuration
 
-Configure Sparkle in your `Rakefile` using motion-sparkle's DSL:
+Configure Sparkle in your `Rakefile` using `motion-sparkle`'s DSL:
+```ruby
+# Rakefile
 
-    # Rakefile
+app.sparkle do
+  # Required setting
+  release :base_url, 'http://example.com/releases/current' # `current` is a folder, don't use a trailing slash
 
-    app.sparkle do
-      # Required setting
-      release :base_url, 'http://example.com/releases/current' # `current` is a folder, don't use a trailing slash
+  # Recommended setting
+  # This will set both your `app.version` and `app.short_version` to the same value
+  # It's fine not to use it, just remember to set both as Sparkle needs them
+  release :version, '1.0'
 
-      # Recommended setting
-      # This will set both your `app.version` and `app.short_version` to the same value
-      # It's fine not to use it, just remember to set both as Sparkle needs them
-      release :version, '1.0'
+  ## Optional settings and their default values and/or examples
 
-      ## Optional settings and their default values and/or examples
+  ## Please note that `base_url` must always be set (at the moment), 
+  ## even you override it completely with the options below
 
-      ## Please note that `base_url` must always be set (at the moment), 
-      ## even you override it completely with the options below
+  # Public Key
+  release :public_key, 'dsa_pub.pem' # default
 
-      # Public Key
-      release :public_key, 'dsa_pub.pem' # default
+  # Appcast Feed 
+  release :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
+  release :feed_filename, 'releases.xml' # default
 
-      # Appcast Feed 
-      release :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
-      release :feed_filename, 'releases.xml' # default
-
-      # Release Notes
-      release :notes_base_url, 'http://downloads.example.com/releases' # defaults to base_url
-      release :notes_filename, 'release_notes.html' # default
+  # Release Notes
+  release :notes_base_url, 'http://downloads.example.com/releases' # defaults to base_url
+  release :notes_filename, 'release_notes.html' # default
       
-      # App Package
-      release :package_base_url, 'http://downloads.example.com/releases' # defaults to base_url
-      release :package_filename, "#{app.name}.zip" # default
-    end
+  # App Package
+  release :package_base_url, 'http://downloads.example.com/releases' # defaults to base_url
+  release :package_filename, "#{app.name}.zip" # default
+end
+```
 
 To complete the configuration, run
 
@@ -144,10 +149,11 @@ Here's an example based on the RubyMotion default OS X app example, "Hello". You
 This will add the classic "Check for updates..." entry on the menu; when the user clicks it, the nice default of experience of Sparkle will begin.
 
 In `menu.rb`, right below the line that adds the "Preferences" item:
-
-    sparkle = addItemWithTitle("Check for updates...", action: nil, keyEquivalent: '')
-    sparkle.setTarget SUUpdater.new
-    sparkle.setAction 'checkForUpdates:'
+```ruby
+  sparkle = addItemWithTitle("Check for updates...", action: nil, keyEquivalent: '')
+  sparkle.setTarget SUUpdater.new
+  sparkle.setAction 'checkForUpdates:'
+```
 
 Once you build your application, you should be able to see a "Check for updates..." item in the Application menu. Using it will work but will quickly produce an error. Keep going to make it work.
 
@@ -177,11 +183,13 @@ To do so, follow the same steps every time:
 
 ### 1. Bump the version
 
-    # In your Rakefile
+```ruby
+  # In your Rakefile
 
-    sparkle.app do
-      release :version, '1.1' # bump the versions
-    end
+  sparkle.app do
+    release :version, '1.1' # bump the versions
+  end
+```
 
 ### 2. Build your app for release
 
@@ -207,7 +215,7 @@ Sparkle for the win.
 
 ## Help, Limitations, Troubleshooting and Testing
 
-If you need further help, please open an Issue on Github.
+If you need further help, please open an [Issue on Github](https://github.com/webcracy/motion-sparkle/issues/).
 
 Limitations:
 
@@ -224,7 +232,7 @@ Test coverage currently only extends to configuration and certificate generation
 
 ## Contributing
 
-Please do help with comments, issues and pull requests!
+Please do help with comments, issues and pull requests! The gem's repository is at [github.com/webcracy/motion-sparkle](https://github.com/webcracy/motion-sparkle/).
 
 I've made a list of features that I look forward to having. You can attack those or suprise me :)
 
@@ -242,10 +250,12 @@ Thanks!
 
 ## Credits
 
+Contributors: [View all on Github](https://github.com/webcracy/motion-sparkle/graphs/contributors)
+
 Author: Alexandre L. Solleiro
 
-* Twitter - http://twitter.com/als
 * Github - http://github.com/webcracy
+* Twitter - http://twitter.com/als
 * Website - http://webcracy.org
 
 Thanks to the authors and contributors of [HipByte/motion-cocoapods](https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
