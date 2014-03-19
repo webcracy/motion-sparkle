@@ -30,13 +30,6 @@ module Motion::Project
     end
 
     def appcast_xml
-      base_url = appcast.base_url
-      package_url = if appcast.package_url.nil?
-        base_url
-      else
-        File.join(appcast.package_url, @config.version)
-      end
-
       rss = REXML::Element.new 'rss'
       rss.attributes['xmlns:atom'] = "http://www.w3.org/2005/Atom"
       rss.attributes['xmlns:sparkle'] = "http://www.andymatuschak.org/xml-namespaces/sparkle"
@@ -58,9 +51,9 @@ module Motion::Project
       guid = item.add_element('guid')
       guid.text = "#{@config.name}-#{@config.version}"
       guid.attributes['isPermaLink'] = false
-      item.add_element('sparkle:releaseNotesLink').text = "#{base_url}/#{appcast.notes_filename}"
+      item.add_element('sparkle:releaseNotesLink').text = "#{appcast.notes_url}/#{appcast.notes_filename}"
       enclosure = item.add_element('enclosure')
-      enclosure.attributes['url'] = "#{package_url}/#{@package_file}"
+      enclosure.attributes['url'] = "#{appcast.package_url}/#{@package_file}"
       enclosure.attributes['length'] = "#{@package_size}"
       enclosure.attributes['type'] = "application/octet-stream"
       enclosure.attributes['sparkle:version'] = @config.version
@@ -94,14 +87,34 @@ module Motion::Project
 
 
     class Appcast
-      attr_accessor :base_url, :feed_filename, :notes_filename, :package_filename, :package_url
+      attr_accessor :base_url, 
+        :feed_base_url,
+        :feed_filename,
+        :notes_base_url, 
+        :notes_filename, 
+        :package_base_url,
+        :package_filename
 
       def initialize
+        @feed_base_url = nil
         @feed_filename = 'releases.xml'
+        @notes_base_url = nil
         @notes_filename = 'release_notes.html'
+        @package_base_url = nil
         @package_filename = nil
-        @package_url = nil
         @base_url = nil
+      end
+
+      def feed_url
+        "#{feed_base_url || base_url}/#{feed_filename}"
+      end
+
+      def notes_url
+        "#{feed_base_url || base_url}/#{feed_filename}"
+      end
+
+      def package_url
+        "#{package_base_url || base_url}/#{feed_filename}"
       end
 
       def full_feed_url

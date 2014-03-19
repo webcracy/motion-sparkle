@@ -18,22 +18,21 @@ module Motion::Project
 
     def publish(key, value)
       case key
-      when :feed_url
-        feed_url value
       when :public_key
         public_key value
-      when :version
-        version value
       when :base_url
         appcast.base_url = value
-        feed_url appcast.full_feed_url
-      when :package_url
-        appcast.package_url = value
-      when :notes_filename, :package_filename
+        feed_url appcast.feed_url
+      when :feed_base_url
         appcast.send(key.to_s + '=', value)
+        feed_url appcast.feed_url
       when :feed_filename
         appcast.feed_filename = value
-        feed_url appcast.full_feed_url
+        feed_url appcast.feed_url
+      when :version
+        version value
+      when :notes_base_url, :base_package_url, :notes_filename, :package_filename
+        appcast.send(key.to_s + '=', value)
       else
         raise "Unknown Sparkle config option #{key}"
       end
