@@ -87,12 +87,12 @@ module Motion::Project
 
 
     class Appcast
-      attr_accessor :base_url, 
+      attr_accessor :base_url,
         :feed_base_url,
         :feed_filename,
-        :notes_base_url, 
-        :notes_filename, 
-        :package_base_url,
+        :notes_base_url,
+        :notes_filename,
+        :base_package_url,
         :package_filename
 
       def initialize
@@ -100,7 +100,7 @@ module Motion::Project
         @feed_filename = 'releases.xml'
         @notes_base_url = nil
         @notes_filename = 'release_notes.html'
-        @package_base_url = nil
+        @base_package_url = nil
         @package_filename = nil
         @base_url = nil
       end
@@ -114,7 +114,7 @@ module Motion::Project
       end
 
       def package_url
-        "#{package_base_url || base_url}/#{feed_filename}"
+        "#{base_package_url || base_url}/#{feed_filename}"
       end
 
       def full_feed_url
