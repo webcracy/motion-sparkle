@@ -63,19 +63,22 @@ Configure Sparkle in your `Rakefile` using motion-sparkle's DSL:
 
       ## Optional settings and their default values and/or examples
 
+      ## Please note that `base_url` must always be set (at the moment), 
+      ## even you override it completely with the options below
+
       # Public Key
       release :public_key, 'dsa_pub.pem' # default
 
       # Appcast Feed 
-      release :base_feed_url, 'http://downloads.example.com/releases' # defaults to base_url
+      release :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
       release :feed_filename, 'releases.xml' # default
 
       # Release Notes
-      release :base_notes_url, 'http://downloads.example.com/releases' # defaults to base_url
+      release :notes_base_url, 'http://downloads.example.com/releases' # defaults to base_url
       release :notes_filename, 'release_notes.html' # default
       
       # App Package
-      release :base_package_url, 'http://downloads.example.com/releases' # defaults to base_url
+      release :package_base_url, 'http://downloads.example.com/releases' # defaults to base_url
       release :package_filename, "#{app.name}.zip" # default
     end
 

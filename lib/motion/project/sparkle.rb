@@ -31,7 +31,7 @@ module Motion::Project
         feed_url appcast.feed_url
       when :version
         version value
-      when :notes_base_url, :base_package_url, :notes_filename, :package_filename
+      when :notes_base_url, :package_base_url, :notes_filename, :package_filename
         appcast.send(key.to_s + '=', value)
       else
         raise "Unknown Sparkle config option #{key}"

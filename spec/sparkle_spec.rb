@@ -24,6 +24,13 @@ describe "motion-sparkle" do
           release :base_url, 'http://example.com' 
           release :public_key, 'public_key.pem'
           release :version, '1.0'
+          # Optional config options
+          release :feed_base_url, 'http://rss.example.com'
+          release :feed_filename, 'example.xml'
+          release :notes_base_url, 'http://www.example.com'
+          release :notes_filename, 'example.html'
+          release :package_base_url, 'http://download.example.com'
+          release :package_filename, 'example.zip'
         end
       end
     end
@@ -34,7 +41,15 @@ describe "motion-sparkle" do
   end
 
   it "Sparkle's feed url should be set correctly" do
-    @config.info_plist['SUFeedURL'].should.equal 'http://example.com/releases.xml'
+    @config.info_plist['SUFeedURL'].should.equal 'http://rss.example.com/example.xml'
+  end
+
+  it "Sparkle's release notes url should be set correctly" do
+    @config.sparkle.appcast.notes_url.should.equal 'http://www.example.com/example.html'
+  end
+
+  it "Sparkle's appcast package url should be set correctly" do
+    @config.sparkle.appcast.package_url.should.equal 'http://download.example.com/example.zip'
   end
 
   it "Sparkle's public key should have custom name" do

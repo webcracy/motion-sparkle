@@ -110,16 +110,13 @@ module Motion::Project
       end
 
       def notes_url
-        "#{feed_base_url || base_url}/#{feed_filename}"
+        "#{notes_base_url || base_url}/#{notes_filename}"
       end
 
       def package_url
-        "#{package_base_url || base_url}/#{feed_filename}"
+        "#{package_base_url || base_url}/#{package_filename}"
       end
 
-      def full_feed_url
-        "#{base_url}/#{feed_filename}"
-      end
     end
 
   end
