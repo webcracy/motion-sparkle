@@ -24,9 +24,11 @@ module Motion::Project
         public_key value
       when :version
         version value
-      when :base_url 
+      when :base_url
         appcast.base_url = value
         feed_url appcast.full_feed_url
+      when :package_url
+        appcast.package_url = value
       when :notes_filename, :package_filename
         appcast.send(key.to_s + '=', value)
       when :feed_filename
@@ -71,10 +73,10 @@ module Motion::Project
           @ignorable.delete(line) if @ignorable.include?(line)
         end
       end
-      File.open(gitignore_path, 'a') do |f|  
+      File.open(gitignore_path, 'a') do |f|
         @ignorable.each do |i|
           f << "#{i}\n"
-        end 
+        end
       end if @ignorable.any?
       `cat #{gitignore_path}`
     end
@@ -137,7 +139,7 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def gitignore_path
-      project_path + ".gitignore"  
+      project_path + ".gitignore"
     end
 
     def sparkle_release_path

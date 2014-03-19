@@ -19,7 +19,7 @@ module Motion::Project
         doc = REXML::Formatters::Pretty.new
         doc.write(appcast_xml, xml_string)
         f << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-        f << xml_string 
+        f << xml_string
         f << "\n"
       end
       if appcast_file
@@ -31,6 +31,12 @@ module Motion::Project
 
     def appcast_xml
       base_url = appcast.base_url
+      package_url = if appcast.package_url.nil?
+        base_url
+      else
+        File.join(appcast.package_url, @config.version)
+      end
+
       rss = REXML::Element.new 'rss'
       rss.attributes['xmlns:atom'] = "http://www.w3.org/2005/Atom"
       rss.attributes['xmlns:sparkle'] = "http://www.andymatuschak.org/xml-namespaces/sparkle"
@@ -54,7 +60,7 @@ module Motion::Project
       guid.attributes['isPermaLink'] = false
       item.add_element('sparkle:releaseNotesLink').text = "#{base_url}/#{appcast.notes_filename}"
       enclosure = item.add_element('enclosure')
-      enclosure.attributes['url'] = "#{base_url}/#{@package_file}"
+      enclosure.attributes['url'] = "#{package_url}/#{@package_file}"
       enclosure.attributes['length'] = "#{@package_size}"
       enclosure.attributes['type'] = "application/octet-stream"
       enclosure.attributes['sparkle:version'] = @config.version
@@ -88,12 +94,13 @@ module Motion::Project
 
 
     class Appcast
-      attr_accessor :base_url, :feed_filename, :notes_filename, :package_filename
+      attr_accessor :base_url, :feed_filename, :notes_filename, :package_filename, :package_url
 
       def initialize
         @feed_filename = 'releases.xml'
         @notes_filename = 'release_notes.html'
         @package_filename = nil
+        @package_url = nil
         @base_url = nil
       end
 
