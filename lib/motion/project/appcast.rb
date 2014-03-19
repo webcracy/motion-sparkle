@@ -87,7 +87,7 @@ module Motion::Project
 
 
     class Appcast
-      attr_accessor :base_url, 
+      attr_accessor :base_url,
         :feed_base_url,
         :feed_filename,
         :notes_base_url, 
