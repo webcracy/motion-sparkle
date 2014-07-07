@@ -51,9 +51,9 @@ module Motion::Project
       guid = item.add_element('guid')
       guid.text = "#{@config.name}-#{@config.version}"
       guid.attributes['isPermaLink'] = false
-      item.add_element('sparkle:releaseNotesLink').text = "#{appcast.notes_url}/#{appcast.notes_filename}"
+      item.add_element('sparkle:releaseNotesLink').text = "#{appcast.notes_url}"
       enclosure = item.add_element('enclosure')
-      enclosure.attributes['url'] = "#{appcast.package_url}/#{@package_file}"
+      enclosure.attributes['url'] = "#{appcast.package_url}"
       enclosure.attributes['length'] = "#{@package_size}"
       enclosure.attributes['type'] = "application/octet-stream"
       enclosure.attributes['sparkle:version'] = @config.version
