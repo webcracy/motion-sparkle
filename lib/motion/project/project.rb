@@ -27,21 +27,4 @@ module Motion::Project
       alias_method "build", "build_with_sparkle"
     end
   end
-
-  # In 10.9, `codesign` no longer uses the `--deep` flag by default
-  # To make sure `Sparkle.framework` is signed, we need to override 
-  # this part of the RubyMotion build process to pass it
-  # FIXME: this will probably be taken care of upstream
-  class Builder
-    def codesign(config, platform)
-      app_bundle = config.app_bundle_raw('MacOSX')
-      entitlements = File.join(config.versionized_build_dir(platform), "Entitlements.plist")
-      if File.mtime(config.project_file) > File.mtime(app_bundle) \
-          or !system("/usr/bin/codesign --verify \"#{app_bundle}\" >& /dev/null")
-        App.info 'Codesign', app_bundle
-        File.open(entitlements, 'w') { |io| io.write(config.entitlements_data) }
-        sh "/usr/bin/codesign --deep --force --sign \"#{config.codesign_certificate}\" --entitlements \"#{entitlements}\" \"#{app_bundle}\""
-      end
-    end
-  end
 end
