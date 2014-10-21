@@ -8,11 +8,13 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 We're waiting for a fix to RubyMotion to be released before we can package a new version of `motion-sparkle` that is compatible with Mac OS X 10.10 Yosemite. If you're experiencing codesigning issues, you'll need to hack around a bit to get things to work:
 
-1. Patch RubyMotion's codesigning with https://gist.github.com/alloy/ee1fe70379dbbbb0d827 (more info: https://github.com/webcracy/motion-sparkle/issues/9#issuecomment-59768849)
+1. Patch RubyMotion's codesigning with this patch: https://gist.github.com/alloy/ee1fe70379dbbbb0d827 (more info: https://github.com/webcracy/motion-sparkle/issues/9#issuecomment-59768849)
 2. Use the `yosemite-hacks` branch instead of Rubygems.
 
-    # Gemfile
-    gem 'motion-sparkle', github: 'webcracy/motion-sparkle', branch: "yosemite-hacks"
+```ruby
+# Gemfile
+gem 'motion-sparkle', github: 'webcracy/motion-sparkle', branch: "yosemite-hacks"
+```
 
 Many thanks to @JonasNielsen, @alloy, @nickyjahal and @did for their help.
 
