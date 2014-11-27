@@ -1,6 +1,11 @@
 # Rake tasks
 namespace :sparkle do 
 
+  task :install do
+    sparkle = App.config.sparkle
+    sparkle.install
+  end
+
   desc "Setup Sparkle configuration"
   task :setup do
     sparkle = App.config.sparkle

@@ -1,22 +1,17 @@
 require 'erb'
 require 'rexml/document'
 
-module Motion; module Project
-  
+module Motion::Project
   class Sparkle
-    # for ERB
-    # attr_reader :name
 
-    TemplatePaths = [
+    TEMPLATE_PATHS = [
       File.expand_path(File.join(__FILE__, '../appcast'))
     ]
-
-    Templates = TemplatePaths.map { |path| Dir.glob(path + '/*') }.flatten.map { |x| File.basename(x) }
 
     def all_templates
       @all_templates ||= begin
         templates = {}
-        TemplatePaths.map { |path| Dir.glob(path + '/*') }.flatten.each do |template_path|
+        TEMPLATE_PATHS.map { |path| Dir.glob(path + '/*') }.flatten.each do |template_path|
           templates[File.basename(template_path)] = template_path
         end
         templates
@@ -36,5 +31,4 @@ module Motion; module Project
     end
 
   end
-
-end; end
+end

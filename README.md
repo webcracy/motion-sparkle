@@ -4,23 +4,10 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 *NB: Sparkle only works for OS X projects*
 
-## WORKAROUND FOR YOSEMITE CODESIGNING ISSUES
-
-We're waiting for a fix to RubyMotion to be released before we can package a new version of `motion-sparkle` that is compatible with Mac OS X 10.10 Yosemite. If you're experiencing codesigning issues, you'll need to hack around a bit to get things to work:
-
-1. Patch RubyMotion's codesigning with this patch: https://gist.github.com/alloy/ee1fe70379dbbbb0d827 (more info: https://github.com/webcracy/motion-sparkle/issues/9#issuecomment-59768849)
-2. Use the `yosemite-hacks` branch instead of Rubygems.
-
-```ruby
-# Gemfile
-gem 'motion-sparkle', github: 'webcracy/motion-sparkle', branch: "yosemite-hacks"
-```
-
-Many thanks to @JonasNielsen, @alloy, @nickyjahal and @did for their help.
-
-**Table of Contents**
+## Table of Contents
 
 - [Overview](#overview)
+- [Compatibility](#compatibility)
 - [Installation](#installation)
 - [Settings configuration](#settings-configuration)
 - [Certificate configuration](#certificate-configuration)
@@ -51,6 +38,19 @@ In a nutshell, when users click "Check for updates..." in an app, Sparkle checks
 While it's easy to use Sparkle with RubyMotion without `motion-sparkle`, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating the ZIP, XML and release notes HTML file for you.
 
 After building your app for release and running `rake sparkle:package`, all you need to do is upload 3 files to the URL you specify in the `Rakefile` and your users will be able to get the new release.
+
+## Compatibility
+
+### Mac OS X 10.7 and above 
+  
+  * Use the latest version of **motion-sparkle**
+  * You will need RubyMotion version 2.38 or above for Yosemite compatibility
+  * Sparkle only supports Mac OS X 10.7 (Lion) up to Mac OS X 10.10 Yosemite
+
+### For legacy compatibility
+
+  * Use version 0.0.5 of **motion-sparkle** 
+  * Should work with Mac OS X 10.6 (Snow Leopard) up until 10.9 (Mavericks)
 
 ## Installation
 
@@ -252,7 +252,7 @@ I've made a list of features that I look forward to having. You can attack those
 
 Wanted features:
 
-  - [ ]  [Issue #1](https://github.com/webcracy/motion-sparkle/issues/1) - Copy the Sparkle.framework in a more sensible way, ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)
+  - [x]  [Issue #1](https://github.com/webcracy/motion-sparkle/issues/1) - Copy the Sparkle.framework in a more sensible way ~~ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)~~
   - [ ]  [Issue #2](https://github.com/webcracy/motion-sparkle/issues/2) - Configurable build targets (only :release supported currently)
   - [ ]  [Issue #3](https://github.com/webcracy/motion-sparkle/issues/3) - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
   - [ ]  [Issue #4](https://github.com/webcracy/motion-sparkle/issues/4) - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)

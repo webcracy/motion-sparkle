@@ -7,15 +7,29 @@ module Motion::Project
     end
 
     def config_ok?
+      check_base_url
+      check_feed_url
+      check_public_key
+    end
+
+    def check_base_url
       base_url_check = appcast.base_url.to_s
       if base_url_check.nil? or base_url_check.empty?
         App.fail "Sparkle :base_url missing. Use `release :base_url, 'http://example.com/your_app_folder'` in your Rakefile's `app.sparkle` block"
       end
+      true
+    end
+
+    def check_feed_url
       feed_url_check = @config.info_plist['SUFeedURL']
       feed_filename_check = appcast.feed_filename
       if feed_url_check.nil? or feed_url_check.empty? or feed_filename_check.nil? or feed_filename_check.empty?
         App.fail "Sparkle :feed_filename is nil or blank. Please check your Rakefile."
       end
+      true
+    end
+
+    def check_public_key
       public_key_check = @config.info_plist['SUPublicDSAKeyFile'].to_s
       if public_key_check.nil? or public_key_check.empty?
         App.fail "Sparkle :public_key is nil or blank. Please check your Rakefile."
@@ -49,9 +63,11 @@ module Motion::Project
     end
 
     def setup
+      verify_installation
       create_sparkle_folder
       add_to_gitignore
       copy_templates
+
       if config_ok?
         App.info "Sparkle", "Config found"
       else

@@ -1,5 +1,4 @@
 module Motion::Project
-
   class Sparkle
 
     SPARKLE_ROOT = "sparkle"
@@ -9,7 +8,7 @@ module Motion::Project
     def initialize(config)
       @config = config
       publish :public_key, 'dsa_pub.pem'
-      embed_framework
+      install_and_embed
     end
 
     def appcast
@@ -24,7 +23,7 @@ module Motion::Project
         appcast.base_url = value
         feed_url appcast.feed_url
       when :feed_base_url
-        appcast.send(key.to_s + '=', value)
+        appcast.feed_base_url = value
         feed_url appcast.feed_url
       when :feed_filename
         appcast.feed_filename = value
@@ -32,18 +31,12 @@ module Motion::Project
       when :version
         version value
       when :notes_base_url, :package_base_url, :notes_filename, :package_filename
-        appcast.send(key.to_s + '=', value)
+        appcast.send "#{key}=", value
       else
         raise "Unknown Sparkle config option #{key}"
       end
     end
     alias_method :release, :publish
-
-    def embed_framework
-      framework_path = Pathname.new File.dirname(__FILE__)
-      framework_path = (framework_path.parent.parent.parent + 'vendor/Sparkle.framework').to_s
-      @config.embedded_frameworks << framework_path
-    end
 
     def version(vstring)
       @config.version = vstring.to_s
@@ -137,6 +130,10 @@ If you lose it, your users will be unable to upgrade.
       @project_path ||= Pathname.new(@config.project_dir)
     end
 
+    def vendor_path
+      @vendor_path ||= Pathname.new(project_path + 'vendor/')
+    end
+
     def gitignore_path
       project_path + ".gitignore"
     end
@@ -183,5 +180,4 @@ If you lose it, your users will be unable to upgrade.
     end
 
   end
-
 end
