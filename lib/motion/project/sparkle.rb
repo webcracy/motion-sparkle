@@ -117,6 +117,7 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def generate_public_key
+      FileUtils.mkdir_p('resources') unless File.exist?('resources')
       `#{openssl} dsa -in #{private_key_path} -pubout -out #{public_key_path}`
     end
 
