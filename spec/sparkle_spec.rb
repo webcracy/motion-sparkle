@@ -15,6 +15,7 @@ describe "motion-sparkle" do
       setup_temporary_directory
       
       FileUtils.mkdir_p(temporary_directory + 'resources')
+      FileUtils.mkdir_p(temporary_directory + 'vendor')
       FileUtils.touch(temporary_directory + '.gitignore')
 
       @config = App.config
@@ -33,6 +34,9 @@ describe "motion-sparkle" do
           release :package_filename, 'example.zip'
         end
       end
+      Rake::Task['sparkle:setup'].invoke
+      Rake::Task['sparkle:setup_certificates'].invoke
+      @completed_setup = true
     end
   end
 
@@ -66,25 +70,15 @@ describe "motion-sparkle" do
   end
 
   it "Sparkle framework should be embedded" do
-    sparkle_framework_path = ROOT + "vendor/Sparkle.framework"
-    @config.embedded_frameworks.include?(sparkle_framework_path.to_s).should.equal true
-  end
-
-  before do
-    unless @completed_setup
-      Rake::Task['sparkle:setup'].invoke
-      Rake::Task['sparkle:setup_certificates'].invoke
-      @completed_setup = true
-    end
+    sparkle_framework_path = ROOT + "tmp/vendor/Sparkle.framework"
+    @config.embedded_frameworks.include?(sparkle_framework_path).should.equal true
   end
 
   it "should create private certificate" do
-    puts @config.sparkle.private_key_path.to_s
     File.exist?(@config.sparkle.private_key_path.to_s).should.equal true
   end
 
   it "should create public certificate" do
-    puts @config.sparkle.public_key_path.to_s
     File.exist?(@config.sparkle.public_key_path.to_s).should.equal true
   end
 
