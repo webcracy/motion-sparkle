@@ -4,6 +4,14 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 *NB: Sparkle only works for OS X projects*
 
+## Sandboxing 
+
+This version uses the [ksuther xpc branch](https://github.com/ksuther/Sparkle/tree/xpc) to support an app that uses sandboxing.  The current Sparkle framework (as of 1.11) can not be used with a sandboxed app.
+
+The ksuther branch is not the perfect solution, but is currently the best one, as discussed in https://github.com/sparkle-project/Sparkle/issues/363
+
+Uses the 1.10 version: Sparkle-xpc-6a20fcb46d
+
 ## Table of Contents
 
 - [Overview](#overview)
