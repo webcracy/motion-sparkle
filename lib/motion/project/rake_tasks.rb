@@ -14,6 +14,7 @@ namespace :sparkle do
 
   desc "Create a ZIP file with you application .app release build"
   task :package do
+    App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.package
   end
@@ -25,6 +26,7 @@ namespace :sparkle do
 
   desc "Sign the ZIP file with appropriate certificates"
   task :sign do
+    App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.sign_package
   end
@@ -35,18 +37,21 @@ namespace :sparkle do
   end
 
   task :copy_release_notes_templates do
+    App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.copy_templates(force = true)
   end
 
   desc "Generate the appcast xml feed"
   task :feed do
+    App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.create_appcast
   end
 
   desc "Update the release notes of this build"
   task :release_notes do
+    App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.create_release_notes
   end
