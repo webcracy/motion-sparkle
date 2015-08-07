@@ -46,10 +46,10 @@ module Motion::Project
       atom_link.attributes['rel'] = 'self'
       atom_link.attributes['type'] = "application/rss+xml"
       item = channel.add_element 'item'
-      item.add_element('title').text = "#{@config.name} #{@config.version}"
+      item.add_element('title').text = "#{@config.name} #{@config.short_version}"
       item.add_element('pubDate').text = Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
       guid = item.add_element('guid')
-      guid.text = "#{@config.name}-#{@config.version}"
+      guid.text = "#{@config.name}-#{@config.short_version}"
       guid.attributes['isPermaLink'] = false
       item.add_element('sparkle:releaseNotesLink').text = "#{appcast.notes_url}"
       enclosure = item.add_element('enclosure')
@@ -57,6 +57,7 @@ module Motion::Project
       enclosure.attributes['length'] = "#{@package_size}"
       enclosure.attributes['type'] = "application/octet-stream"
       enclosure.attributes['sparkle:version'] = @config.version
+      enclosure.attributes['sparkle:shortVersionString'] = @config.short_version
       enclosure.attributes['sparkle:dsaSignature'] = @package_signature
       rss
     end
