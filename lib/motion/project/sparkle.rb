@@ -44,7 +44,7 @@ module Motion::Project
     end
 
     def version_string
-      "#{@config.version} (#{@config.short_version})"
+      "#{@config.short_version} (#{@config.version})"
     end
 
     def feed_url(url)
