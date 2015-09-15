@@ -101,7 +101,7 @@ Aborting (no action performed)
           return
         end
       end
-      `#{openssl} dsaparam 1024 < /dev/urandom > #{dsa_param_path}`
+      `#{openssl} dsaparam 2048 < /dev/urandom > #{dsa_param_path}`
       `#{openssl} gendsa #{dsa_param_path} -out #{private_key_path}`
       generate_public_key
       `rm #{dsa_param_path}`
