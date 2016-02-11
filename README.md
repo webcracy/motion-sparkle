@@ -10,7 +10,7 @@ This version uses the [ksuther xpc branch](https://github.com/ksuther/Sparkle/tr
 
 The ksuther branch is not the perfect solution, but is currently the best one, as discussed in https://github.com/sparkle-project/Sparkle/issues/363
 
-Uses the 1.10 version: Sparkle-xpc-6a20fcb46d
+Using ksuther/Sparkle-xpc-5c46609, which integrates version 1.13.1 of sparkle-project/Sparkle master
 
 ## Table of Contents
 
