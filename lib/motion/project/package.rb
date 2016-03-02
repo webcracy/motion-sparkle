@@ -7,8 +7,8 @@ module Motion::Project
       @config.build_mode = :release
       return unless create_zip_file
       App.info "Release", version_string
-      App.info "Version", @config.version
-      App.info "Build", @config.short_version || 'unspecified in Rakefile'
+      App.info "Version", @config.short_version
+      App.info "Build", @config.version || 'unspecified in Rakefile'
       App.info "Size", @package_size.to_s
       sign_package
       create_appcast
