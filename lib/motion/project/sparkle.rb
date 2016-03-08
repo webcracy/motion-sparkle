@@ -88,9 +88,8 @@ module Motion::Project
 
     def generate_keys
       return false unless config_ok?
-      unless File.exist?(sparkle_config_path)
-        FileUtils.mkdir_p sparkle_config_path
-      end
+      create_config_folder
+
       [dsa_param_path, private_key_path, public_key_path].each do |file|
         if File.exist? file
           App.info "Sparkle", "Error: file exists.
@@ -117,6 +116,7 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def generate_public_key
+      FileUtils.mkdir_p('resources') unless File.exist?('resources')
       `#{openssl} dsa -in #{private_key_path} -pubout -out #{public_key_path}`
     end
 
