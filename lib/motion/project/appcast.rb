@@ -14,6 +14,7 @@ module Motion::Project
     end
 
     def create_appcast
+      create_release_folder
       appcast_file = File.open("#{sparkle_release_path}/#{appcast.feed_filename}", 'w') do |f|
         xml_string = ''
         doc = REXML::Formatters::Pretty.new
