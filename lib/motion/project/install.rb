@@ -7,6 +7,12 @@ module Motion::Project
       file_path = Pathname.new File.dirname(__FILE__)
       distrib_path = "vendor/#{SPARKLE_ZIP_FILE}"
       (file_path.parent.parent.parent + distrib_path).to_s
+      Pathname.new(sparkle_vendor_path + SPARKLE_ZIP_FILE)
+    end
+
+    def sparkle_vendor_path
+      file_path = Pathname.new File.dirname(__FILE__)
+      (file_path.parent.parent.parent + 'vendor/').to_s
     end
 
     def sparkle_path
