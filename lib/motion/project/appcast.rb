@@ -95,7 +95,8 @@ module Motion::Project
         :notes_base_url, 
         :notes_filename, 
         :package_base_url,
-        :package_filename
+        :package_filename,
+        :archive_folder
 
       def initialize
         @feed_base_url = nil
@@ -105,6 +106,7 @@ module Motion::Project
         @package_base_url = nil
         @package_filename = nil
         @base_url = nil
+        @archive_folder = nil
       end
 
       def feed_url

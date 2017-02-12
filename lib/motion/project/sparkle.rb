@@ -32,6 +32,8 @@ module Motion::Project
         version value
       when :notes_base_url, :package_base_url, :notes_filename, :package_filename
         appcast.send "#{key}=", value
+      when :archive_folder
+        appcast.archive_folder = value
       else
         raise "Unknown Sparkle config option #{key}"
       end
@@ -173,6 +175,10 @@ If you lose it, your users will be unable to upgrade.
 
     def zip_file
       appcast.package_filename || "#{app_name}.zip"
+    end
+
+    def archive_folder
+      appcast.archive_folder
     end
 
     def app_file

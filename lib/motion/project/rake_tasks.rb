@@ -49,6 +49,14 @@ namespace :sparkle do
     sparkle.create_appcast
   end
 
+  desc "Generate the appcast using Sparkle's `generate_appcast`"
+  task :generate_appcast do
+    App.config_without_setup.build_mode = :release
+    sparkle = App.config.sparkle
+    sparkle.create_appcast
+    results = `#{sparkle.sparkle_vendor_path}/generate_appcast "#{sparkle.private_key_path}" "#{sparkle.archive_folder}"`
+  end
+
   desc "Update the release notes of this build"
   task :release_notes do
     App.config_without_setup.build_mode = :release
