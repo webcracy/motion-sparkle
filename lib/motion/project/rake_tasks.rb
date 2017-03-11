@@ -53,7 +53,6 @@ namespace :sparkle do
   task :generate_appcast do
     App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
-    sparkle.create_appcast
     results = `#{sparkle.sparkle_vendor_path}/generate_appcast "#{sparkle.private_key_path}" "#{sparkle.archive_folder}"`
   end
 
