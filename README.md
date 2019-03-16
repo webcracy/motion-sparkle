@@ -4,9 +4,11 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 *NB: Sparkle only works for OS X projects*
 
-## Sandboxing 
+## Sandboxing
 
 This version uses the [ui-separation-and-xpc branch](https://github.com/sparkle-project/Sparkle/tree/ui-separation-and-xpc) to support an app that uses sandboxing.  Sparkle is in transition, and the sandbox version is slated for 2.0.
+
+_Sparkle built from ui-separation-and-xpc#b1c3b313f53c95a91c8adc07b991ff9a306e6cf8 on Dec 9th, 2018_
 
 [Reference thread](https://github.com/sparkle-project/Sparkle/issues/363)
 
@@ -37,7 +39,7 @@ This version uses the [ui-separation-and-xpc branch](https://github.com/sparkle-
 
 ## Overview
 
-[Sparkle](http://sparkle.andymatuschak.org/) powers the "Check for updates" feature of countless Mac applications. 
+[Sparkle](http://sparkle.andymatuschak.org/) powers the "Check for updates" feature of countless Mac applications.
 
 In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for available updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
@@ -47,15 +49,15 @@ After building your app for release and running `rake sparkle:package`, all you 
 
 ## Compatibility
 
-### Mac OS X 10.7 and above 
-  
+### Mac OS X 10.7 and above
+
   * Use the latest version of **motion-sparkle**
   * You will need RubyMotion version 2.38 or above for Yosemite compatibility
   * Sparkle only supports Mac OS X 10.7 (Lion) up to Mac OS X 10.10 Yosemite
 
 ### For legacy compatibility
 
-  * Use version 0.0.5 of **motion-sparkle** 
+  * Use version 0.0.5 of **motion-sparkle**
   * Should work with Mac OS X 10.6 (Snow Leopard) up until 10.9 (Mavericks)
 
 ## Installation
@@ -87,20 +89,20 @@ app.sparkle do
 
   ## Optional settings and their default values and/or examples
 
-  ## Please note that `base_url` must always be set (at the moment), 
+  ## Please note that `base_url` must always be set (at the moment),
   ## even you override it completely with the options below
 
   # Public Key
   release :public_key, 'dsa_pub.pem' # default
 
-  # Appcast Feed 
+  # Appcast Feed
   release :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
   release :feed_filename, 'releases.xml' # default
 
   # Release Notes
   release :notes_base_url, 'http://downloads.example.com/releases' # defaults to base_url
   release :notes_filename, 'release_notes.html' # default
-      
+
   # App Package
   release :package_base_url, 'http://downloads.example.com/releases' # defaults to base_url
   release :package_filename, "#{app.name}.zip" # default

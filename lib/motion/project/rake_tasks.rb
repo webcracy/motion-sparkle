@@ -1,5 +1,5 @@
 # Rake tasks
-namespace :sparkle do 
+namespace :sparkle do
 
   task :install do
     sparkle = App.config.sparkle

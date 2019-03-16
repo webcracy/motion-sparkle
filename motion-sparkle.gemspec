@@ -8,7 +8,7 @@ $:.unshift File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name        = 'motion-sparkle'
-  spec.version     = '0.6.1'
+  spec.version     = '0.7.0'
   spec.date        = Date.today
   spec.summary     = 'Sparkle integration for Rubymotion projects'
   spec.description = "motion-sparkle makes it easy to use Sparkle with your RubyMotion projects"
