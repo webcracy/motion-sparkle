@@ -9,7 +9,7 @@ ROOT = Pathname.new(File.expand_path('../../', __FILE__))
 $:.unshift(ENV['RUBYMOTION_CHECKOUT'] || "/Library/RubyMotion/lib")
 $:.unshift((ROOT + 'lib').to_s)
 require 'motion/project/template/osx'
-require 'motion-sparkle'
+require 'motion-sparkle-sandbox'
 
 Bacon.summary_at_exit
 

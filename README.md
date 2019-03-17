@@ -1,4 +1,4 @@
-# motion-sparkle
+# motion-sparkle-sandbox
 
 Easily package and release updates of your RubyMotion app with Sparkle.
 
@@ -43,22 +43,17 @@ _Sparkle built from ui-separation-and-xpc#b1c3b313f53c95a91c8adc07b991ff9a306e6c
 
 In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for available updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
-While it's easy to use Sparkle with RubyMotion without `motion-sparkle`, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating the ZIP, XML and release notes HTML file for you.
+While it's easy to use Sparkle with RubyMotion without `motion-sparkle-sandbox`, it's even easier if you use it. The gem takes care of the Sparkle framework integration, simplifies its configuration and then automates the preparation of a release, creating the ZIP, XML and release notes HTML file for you.
 
 After building your app for release and running `rake sparkle:package`, all you need to do is upload 3 files to the URL you specify in the `Rakefile` and your users will be able to get the new release.
 
 ## Compatibility
 
-### Mac OS X 10.7 and above
+### Mac OS X 10.10 and above
 
-  * Use the latest version of **motion-sparkle**
+  * Use the latest version of **motion-sparkle-sandbox**
   * You will need RubyMotion version 2.38 or above for Yosemite compatibility
-  * Sparkle only supports Mac OS X 10.7 (Lion) up to Mac OS X 10.10 Yosemite
-
-### For legacy compatibility
-
-  * Use version 0.0.5 of **motion-sparkle**
-  * Should work with Mac OS X 10.6 (Snow Leopard) up until 10.9 (Mavericks)
+  * Sparkle only supports Mac OS X 10.10 Yosemite and above
 
 ## Installation
 
@@ -74,7 +69,7 @@ and then run
 
 ## Settings configuration
 
-Configure Sparkle in your `Rakefile` using `motion-sparkle`'s DSL:
+Configure Sparkle in your `Rakefile` using `motion-sparkle-sandbox`'s DSL:
 ```ruby
 # Rakefile
 
@@ -120,7 +115,7 @@ If everything is OK, you should be informed that it's time to generate or config
 
 For security, Sparkle allows you to sign your releases with a private certificate before distribution: when the user tries to install an update, Sparkle will check the package using the signature provided in the XML file and the public certificate contained in the running application.
 
-motion-sparkle makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
+motion-sparkle-sandbox makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
 
 You have two options: have Sparkle generate the certificates for you, or follow the instructions to use your existing ones.
 
@@ -183,7 +178,7 @@ Once you build your application, you should be able to see a "Check for updates.
 
 Before you build, make sure you've set your `:base_url` to a destination where you can upload/download your files.
 
-Note that packaging with motion-sparkle only works with the `:release` target at the moment, so make sure your build with be compatible with `rake build:release`.
+Note that packaging with motion-sparkle-sandbox only works with the `:release` target at the moment, so make sure your build with be compatible with `rake build:release`.
 
 Run the setup command again to make sure it's all good:
 
@@ -237,7 +232,7 @@ Sparkle for the win.
 
 ## Help, Limitations, Troubleshooting and Testing
 
-If you need further help, please open an [Issue on Github](https://github.com/webcracy/motion-sparkle/issues/).
+If you need further help, please open an [Issue on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/issues/).
 
 Limitations:
 
@@ -254,33 +249,12 @@ Test coverage currently only extends to configuration and certificate generation
 
 ## Contributing
 
-Please do help with comments, issues and pull requests! The gem's repository is at [github.com/webcracy/motion-sparkle](https://github.com/webcracy/motion-sparkle/).
-
-I've made a list of features that I look forward to having. You can attack those or suprise me :)
-
-Wanted features:
-
-  - [x]  [Issue #1](https://github.com/webcracy/motion-sparkle/issues/1) - Copy the Sparkle.framework in a more sensible way ~~ideally through Cocoapods (it's currently copied multiple times because rubygems won't handle symlinks)~~
-  - [ ]  [Issue #2](https://github.com/webcracy/motion-sparkle/issues/2) - Configurable build targets (only :release supported currently)
-  - [ ]  [Issue #3](https://github.com/webcracy/motion-sparkle/issues/3) - Have more than ZIP as a packaging option, with DMG a priority (see choctop gem)
-  - [ ]  [Issue #4](https://github.com/webcracy/motion-sparkle/issues/4) - Automatic upload to S3 and via rsync/scp/sftp/ftp (see choctop gem)
-  - [ ]  Textile / Markdown for release note templates if possible
-  - [ ]  Ruby 1.8.7, Ruby 1.9.2, Ruby 2.0 compatibility
-  - [ ]  Better test coverage
-
-Thanks!
+Please do help with comments, issues and pull requests! The gem's repository is at [github.com/digitalmoksha/motion-sparkle-sandbox](https://github.com/digitalmoksha/motion-sparkle-sandbox/).
 
 ## Credits
 
-Contributors: [View all on Github](https://github.com/webcracy/motion-sparkle/graphs/contributors)
+Contributors: [View all on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/graphs/contributors)
 
-Author: Alexandre L. Solleiro
+Originally created by [Alexandre L. Solleiro](http://github.com/webcracy), and forked from [webcracy/motion-sparkle](https://github.com/webcracy/motion-sparkle)
 
-* Github - http://github.com/webcracy
-* Twitter - http://twitter.com/als
-* Website - http://webcracy.org
-
-Thanks to the authors and contributors of [HipByte/motion-cocoapods](https://github.com/HipByte/motion-cocoapods) and [drnic/choctop](https://github.com/drnic/choctop) gems, as I have looked for inspiration in their code.
-
-And a low bow to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle)!
-
+Huge thanks to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle) for creating and continuing to maintain Sparkle!

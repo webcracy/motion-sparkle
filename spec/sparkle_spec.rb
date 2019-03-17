@@ -6,14 +6,14 @@ module Motion; module Project;
   end
 end; end
 
-describe "motion-sparkle" do
+describe "motion-sparkle-sandbox" do
   extend SpecHelper::TemporaryDirectory
 
   before do
     unless @completed_setup
       teardown_temporary_directory
       setup_temporary_directory
-      
+
       FileUtils.mkdir_p(temporary_directory + 'resources')
       FileUtils.mkdir_p(temporary_directory + 'vendor')
       FileUtils.touch(temporary_directory + '.gitignore')
@@ -22,7 +22,7 @@ describe "motion-sparkle" do
       @config.project_dir = temporary_directory.to_s
       @config.instance_eval do
         sparkle do
-          release :base_url, 'http://example.com' 
+          release :base_url, 'http://example.com'
           release :public_key, 'public_key.pem'
           release :version, '1.0'
           # Optional config options
@@ -70,7 +70,7 @@ describe "motion-sparkle" do
   end
 
   it "Sparkle framework should be embedded" do
-    sparkle_framework_path = ROOT + "tmp/vendor/Sparkle.framework"
+    sparkle_framework_path = ROOT + "tmp/vendor/Sparkle/Sparkle.framework"
     @config.embedded_frameworks.include?(sparkle_framework_path).should.equal true
   end
 

@@ -66,7 +66,7 @@ module Motion::Project
         App.fail "Sparkle framework not correctly copied to #{sparkle_framework_path.to_s}
 Run `rake sparkle:install` manually or, if the problem persists,
 please explain your setup and problem as an issue on GitHub at:
-https://github.com/webcracy/motion-sparkle/issues
+https://github.com/digitalmoksha/motion-sparkle-sandbox/issues
 "
       end
     end
