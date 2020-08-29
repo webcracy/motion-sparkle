@@ -26,7 +26,7 @@ In order to get xpc services to be signed and work properly, they need to be cop
 
 The `codesign_embedded_executable` can properly sign these files once they have been copied into place.
 
-1. Fetch the `ui-separation-and-xpc` branch
+1. Fetch the `2.x` branch
 2. Copy the `bin/codesign_embedded_executable` into the `vendor` folder
 3. Run `make release` and change to the output folder
 4. Copy the `Sparkle.framework` into the `Sparkle` folder

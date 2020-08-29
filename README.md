@@ -6,9 +6,9 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 ## Sandboxing
 
-This version uses the [ui-separation-and-xpc branch](https://github.com/sparkle-project/Sparkle/tree/ui-separation-and-xpc) to support an app that uses sandboxing.  Sparkle is in transition, and the sandbox version is slated for 2.0.
+This version uses the [2.x branch](https://github.com/sparkle-project/Sparkle/tree/2.x) to support an app that uses sandboxing.  Sparkle 2.x is still in beta.
 
-_Sparkle built from https://github.com/sparkle-project/Sparkle/commit/14871e5ee9753bba3c4b0d8a87e674306d264dc5 on Sep 22nd, 2019_
+_Sparkle built from https://github.com/sparkle-project/Sparkle/commit/438f4a21d5b52596b899d9931525c02a691b2287 on Aug 28th, 2020_
 
 [Reference thread](https://github.com/sparkle-project/Sparkle/issues/363)
 
