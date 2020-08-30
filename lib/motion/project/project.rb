@@ -53,7 +53,7 @@ module Motion::Project
 
           Dir.glob("#{xpc_path}/*.xpc").each do |path|
             App.info 'Codesign', path
-            results = `#{App.config.sparkle.sparkle_vendor_path}/codesign_xpc "#{App.config.codesign_certificate}" "#{File.expand_path(path)}" 2>&1`
+            results = `#{App.config.sparkle.sparkle_vendor_path}/codesign_embedded_executable "#{App.config.codesign_certificate}" "#{File.expand_path(path)}" 2>&1`
           end
         end
       end
