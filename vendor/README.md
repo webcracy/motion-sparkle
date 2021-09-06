@@ -4,7 +4,7 @@ The `vendor` directory should contain
 
 ```
 vendor
-  codesign_embedded_executable
+  codesign_xpc_service
   generate_appcast
   README.md
   Sparkle.zip
