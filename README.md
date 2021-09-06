@@ -6,36 +6,40 @@ Easily package and release updates of your RubyMotion app with Sparkle.
 
 ## Sandboxing
 
-This version uses the [2.x branch](https://github.com/sparkle-project/Sparkle/tree/2.x) to support an app that uses sandboxing.  Sparkle 2.x is still in beta.
+This version uses the Sparkle 2.x to support an app that uses sandboxing.  Sparkle 2.x is still in beta.
 
-_Sparkle built from https://github.com/sparkle-project/Sparkle/commit/438f4a21d5b52596b899d9931525c02a691b2287 on Aug 28th, 2020_
+_Sparkle pulled from release https://github.com/sparkle-project/Sparkle/releases/tag/2.0.0-beta.2, built on on Sep 4th, 2021
 
 [Reference thread](https://github.com/sparkle-project/Sparkle/issues/363)
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Compatibility](#compatibility)
-- [Installation](#installation)
-- [Settings configuration](#settings-configuration)
-- [Certificate configuration](#certificate-configuration)
-	- [Generate new certificates](#generate-new-certificates)
-	- [Use your existing certificates](#use-your-existing-certificates)
-	- [Notes about the public certificate](#notes-about-the-public-certificate)
-	- [Notes about the private certificate](#notes-about-the-private-certificate)
-	- [Warning regarding your private certificate](#warning-regarding-your-private-certificate)
-	- [Run rake sparkle:setup at any moment to make sure your config is OK](#run-rake-sparklesetup-at-any-moment-to-make-sure-your-config-is-ok)
-- [Adding "Check for updates..." to the menu](#adding-check-for-updates-to-the-menu)
-- [First publication](#first-publication)
-- [Releasing updates](#releasing-updates)
-	- [1. Bump the version](#1-bump-the-version)
-	- [2. Build your app for release](#2-build-your-app-for-release)
-	- [3. Update your Release Notes](#3-update-your-release-notes)
-	- [4. Package the release](#4-package-the-release)
-	- [5. Upload](#5-upload)
-- [Help, Limitations, Troubleshooting and Testing](#help-limitations-troubleshooting-and-testing)
-- [Contributing](#contributing)
-- [Credits](#credits)
+- [motion-sparkle-sandbox](#motion-sparkle-sandbox)
+  - [Sandboxing](#sandboxing)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Compatibility](#compatibility)
+    - [Mac OS X 10.10 and above](#mac-os-x-1010-and-above)
+  - [Installation](#installation)
+  - [Settings configuration](#settings-configuration)
+  - [Certificate configuration](#certificate-configuration)
+    - [Generate new certificates](#generate-new-certificates)
+    - [Use your existing certificates](#use-your-existing-certificates)
+    - [Notes about the public certificate](#notes-about-the-public-certificate)
+    - [Notes about the private certificate](#notes-about-the-private-certificate)
+    - [Warning regarding your private certificate](#warning-regarding-your-private-certificate)
+    - [Run `rake sparkle:setup` at any moment to make sure your config is OK](#run-rake-sparklesetup-at-any-moment-to-make-sure-your-config-is-ok)
+  - [Adding "Check for updates..." to the menu](#adding-check-for-updates-to-the-menu)
+  - [First publication](#first-publication)
+  - [Releasing updates](#releasing-updates)
+    - [1. Bump the version](#1-bump-the-version)
+    - [2. Build your app for release](#2-build-your-app-for-release)
+    - [3. Update your Release Notes](#3-update-your-release-notes)
+    - [4. Package the release](#4-package-the-release)
+    - [5. Upload](#5-upload)
+  - [Help, Limitations, Troubleshooting and Testing](#help-limitations-troubleshooting-and-testing)
+  - [Contributing](#contributing)
+  - [Credits](#credits)
 
 ## Overview
 
