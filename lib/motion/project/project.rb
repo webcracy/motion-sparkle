@@ -40,7 +40,7 @@ module Motion::Project
         if File.directory?(App.config.sparkle.sparkle_xpc_path)
           App.info 'Sparkle', 'Removing unnecessary executables...'
           sparkle_path = File.join(bundle_path, "Frameworks/Sparkle.framework")
-          ['Resources/Autoupdate', 'Resources/Updater.app'].each do |item|
+          ['Autoupdate', 'Updater.app', 'Versions/A/Autoupdate', 'Versions/A/Updater.app'].each do |item|
             bundle = File.join(sparkle_path, item)
             FileUtils.rm_r(bundle) if File.exist?(bundle)
           end
@@ -53,7 +53,8 @@ module Motion::Project
 
           Dir.glob("#{xpc_path}/*.xpc").each do |path|
             App.info 'Codesign', path
-            results = `#{App.config.sparkle.sparkle_vendor_path}/codesign_embedded_executable "#{App.config.codesign_certificate}" "#{File.expand_path(path)}" 2>&1`
+            results = `#{App.config.sparkle.sparkle_vendor_path}/codesign_xpc_service "#{App.config.codesign_certificate}" "#{File.expand_path(path)}" 2>&1`
+            puts results
           end
         end
       end
