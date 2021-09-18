@@ -8,7 +8,7 @@ $:.unshift File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |spec|
   spec.name        = 'motion-sparkle-sandbox'
-  spec.version     = '2.0.0-beta.2'
+  spec.version     = '2.0.0.pre.beta.2'
   spec.date        = Date.today
   spec.summary     = 'Sparkle (sandboxed) integration for Rubymotion projects'
   spec.description = 'motion-sparkle-sandbox makes it easy to use the sandboxed version of Sparkle in your RubyMotion OS X apps'
