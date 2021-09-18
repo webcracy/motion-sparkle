@@ -4,10 +4,15 @@ require 'rake'
 require 'rubygems'
 require 'bundler/setup'
 require 'bacon'
+require 'pry'
 
-ROOT = Pathname.new(File.expand_path('../../', __FILE__))
-$:.unshift(ENV['RUBYMOTION_CHECKOUT'] || "/Library/RubyMotion/lib")
+ROOT = Pathname.new(File.expand_path('..', __dir__))
+$:.unshift(ENV['RUBYMOTION_CHECKOUT'] || '/Library/RubyMotion/lib')
 $:.unshift((ROOT + 'lib').to_s)
+
+# need to ensure that we bypass the `app.pods` in `lib/motion-sparkle-sandbox.rb`
+@running_specs = 1
+
 require 'motion/project/template/osx'
 require 'motion-sparkle-sandbox'
 

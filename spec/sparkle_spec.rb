@@ -1,12 +1,16 @@
-require File.expand_path('../spec_helper', __FILE__)
+# frozen_string_literal: true
 
-module Motion; module Project;
-  class Config
-    attr_writer :project_dir
-  end
-end; end
+require File.expand_path('spec_helper', __dir__)
 
-describe "motion-sparkle-sandbox" do
+module Motion
+  module Project
+    class Config
+      attr_writer :project_dir
+    end
+  end; end
+
+# rubocop:disable Metrics/BlockLength
+describe 'motion-sparkle-sandbox' do
   extend SpecHelper::TemporaryDirectory
 
   before do
@@ -21,6 +25,10 @@ describe "motion-sparkle-sandbox" do
       @config = App.config
       @config.project_dir = temporary_directory.to_s
       @config.instance_eval do
+        pods do
+          pod 'Sparkle', POD_VERSION
+        end
+
         sparkle do
           release :base_url, 'http://example.com'
           release :public_key, 'public_key.pem'
@@ -34,8 +42,11 @@ describe "motion-sparkle-sandbox" do
           release :package_filename, 'example.zip'
         end
       end
+
+      Rake::Task['pod:install'].invoke
       Rake::Task['sparkle:setup'].invoke
       Rake::Task['sparkle:setup_certificates'].invoke
+
       @completed_setup = true
     end
   end
@@ -60,31 +71,33 @@ describe "motion-sparkle-sandbox" do
     @config.info_plist['SUPublicDSAKeyFile'].should.equal 'public_key.pem'
   end
 
-  it "Version and short version should be set correctly" do
+  it 'Version and short version should be set correctly' do
     @config.version.should.equal '1.0'
     @config.short_version.should.equal '1.0'
   end
 
-  it "Version should be same for short_version and version" do
+  it 'Version should be same for short_version and version' do
     @config.version.should.equal @config.short_version
   end
 
-  it "Sparkle framework should be embedded" do
-    sparkle_framework_path = ROOT + "tmp/vendor/Sparkle/Sparkle.framework"
-    @config.embedded_frameworks.include?(sparkle_framework_path).should.equal true
+  it 'Sparkle framework pod should be embedded' do
+    sparkle_framework_path = 'vendor/Pods/Sparkle/Sparkle.framework'
+    @config.pods.pods_libraries
+
+    @config.embedded_frameworks.first.end_with?(sparkle_framework_path).should.equal true
   end
 
-  it "should create private certificate" do
+  it 'should create private certificate' do
     File.exist?(@config.sparkle.private_key_path.to_s).should.equal true
   end
 
-  it "should create public certificate" do
+  it 'should create public certificate' do
     File.exist?(@config.sparkle.public_key_path.to_s).should.equal true
   end
 
-  it "should add files to gitignore" do
+  it 'should add files to gitignore' do
     a = `cat .gitignore`
     a.strip.should.not.equal ''
   end
-
 end
+# rubocop:enable Metrics/BlockLength

@@ -3,7 +3,6 @@ require 'rexml/document'
 
 module Motion::Project
   class Sparkle
-
     TEMPLATE_PATHS = [
       File.expand_path(File.join(__FILE__, '../appcast'))
     ]
@@ -18,17 +17,16 @@ module Motion::Project
       end
     end
 
-    def copy_templates(force=false)
+    def copy_templates(force = false)
       all_templates.each_pair do |tmpl, path|
         result = "#{sparkle_config_path}/#{tmpl}"
         if File.exist?(result) and !force
           App.info 'Exists', result
         else
           FileUtils.cp(path, "#{sparkle_config_path}/")
-          App.info 'Create', "./#{sparkle_config_path}/#{tmpl.to_s}"
+          App.info 'Create', "./#{sparkle_config_path}/#{tmpl}"
         end
       end
     end
-
   end
 end
