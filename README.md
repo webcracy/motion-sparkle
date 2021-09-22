@@ -1,49 +1,26 @@
 # motion-sparkle-sandbox
 
-Easily package and release updates of your RubyMotion app with Sparkle.
-
-*NB: Sparkle only works for OS X projects*
-
-## Sandboxing
-
-This version uses the Sparkle 2.x to support an app that uses sandboxing.  Sparkle 2.x is still in beta.
-
-_Sparkle pulled from release https://github.com/sparkle-project/Sparkle/releases/tag/2.0.0-beta.2, built on on Sep 4th, 2021
-
-[Reference thread](https://github.com/sparkle-project/Sparkle/issues/363)
+Easily package and release updates of your RubyMotion app with Sparkle 2 (includes support for sandboxed macOS applications).
 
 ## Table of Contents
 
 - [motion-sparkle-sandbox](#motion-sparkle-sandbox)
-  - [Sandboxing](#sandboxing)
   - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Compatibility](#compatibility)
-    - [Mac OS X 10.10 and above](#mac-os-x-1010-and-above)
   - [Installation](#installation)
   - [Settings configuration](#settings-configuration)
   - [Certificate configuration](#certificate-configuration)
-    - [Generate new certificates](#generate-new-certificates)
-    - [Use your existing certificates](#use-your-existing-certificates)
-    - [Notes about the public certificate](#notes-about-the-public-certificate)
-    - [Notes about the private certificate](#notes-about-the-private-certificate)
-    - [Warning regarding your private certificate](#warning-regarding-your-private-certificate)
-    - [Run `rake sparkle:setup` at any moment to make sure your config is OK](#run-rake-sparklesetup-at-any-moment-to-make-sure-your-config-is-ok)
   - [Adding "Check for updates..." to the menu](#adding-check-for-updates-to-the-menu)
   - [First publication](#first-publication)
   - [Releasing updates](#releasing-updates)
-    - [1. Bump the version](#1-bump-the-version)
-    - [2. Build your app for release](#2-build-your-app-for-release)
-    - [3. Update your Release Notes](#3-update-your-release-notes)
-    - [4. Package the release](#4-package-the-release)
-    - [5. Upload](#5-upload)
   - [Help, Limitations, Troubleshooting and Testing](#help-limitations-troubleshooting-and-testing)
   - [Contributing](#contributing)
   - [Credits](#credits)
 
 ## Overview
 
-[Sparkle](http://sparkle.andymatuschak.org/) powers the "Check for updates" feature of countless Mac applications.
+[Sparkle](https://sparkle-project.org) powers the "Check for updates" feature of countless Mac applications.
 
 In a nutshell, when users click "Check for updates..." in an app, Sparkle checks for available updates against an XML file that you post somewhere on the web. That XML file contains information about your new release, such as the version number, the URL of the package and its digital signature. If there's a newer version available than the one that is currently running, it'll ask for permission to retrieve the package and replace the current app with the new release.
 
@@ -53,27 +30,34 @@ After building your app for release and running `rake sparkle:package`, all you 
 
 ## Compatibility
 
-### Mac OS X 10.10 and above
+### Mac OS X 10.11 and above
 
-  * Use the latest version of **motion-sparkle-sandbox**
-  * You will need RubyMotion version 2.38 or above for Yosemite compatibility
-  * Sparkle only supports Mac OS X 10.10 Yosemite and above
+- Use the latest version of **motion-sparkle-sandbox**
+- You will need RubyMotion version 5.0 or above
+- Sparkle 2 now requires Mac OS X 10.11 El Capitan) or later
 
 ## Installation
 
 In your project's Gemfile, add:
+
 ```ruby
 # Gemfile
 
-gem 'motion-sparkle'
+gem 'motion-sparkle-sandbox'
 ```
+
 and then run
 
-    $ bundle install
+```bash
+bundle install
+```
+
+`motion-sparkle-sandbox` uses the version of [Sparkle 2 on Cocoapods.org](https://cocoapods.org/pods/Sparkle).  This gem no longer includes a copy of Sparkle.
 
 ## Settings configuration
 
-Configure Sparkle in your `Rakefile` using `motion-sparkle-sandbox`'s DSL:
+Configure Sparkle 2 in your `Rakefile` using `motion-sparkle-sandbox`'s DSL:
+
 ```ruby
 # Rakefile
 
@@ -110,32 +94,36 @@ end
 
 To complete the configuration, run
 
-    $ rake sparkle:setup
-
+```plaintext
+rake sparkle:setup
+```
 
 If everything is OK, you should be informed that it's time to generate or configure your certificates.
 
 ## Certificate configuration
 
-For security, Sparkle allows you to sign your releases with a private certificate before distribution: when the user tries to install an update, Sparkle will check the package using the signature provided in the XML file and the public certificate contained in the running application.
+For security, Sparkle 2 allows you to sign your releases with a private certificate before distribution: when the user tries to install an update, Sparkle 2 will check the package using the signature provided in the XML file and the public certificate contained in the running application.
 
-motion-sparkle-sandbox makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
+_Currently, `motion-sparkle-sandbox` does not support configuring `EdDSA` signatures, only `DSA`._
 
-You have two options: have Sparkle generate the certificates for you, or follow the instructions to use your existing ones.
+`motion-sparkle-sandbox` makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
+
+You have two options: have Sparkle 2 generate the certificates for you, or follow the instructions to use your existing ones.
 
 ### Generate new certificates
 
-    $ rake sparkle:setup_certificates
-
+```bash
+rake sparkle:setup_certificates
+```
 
 ### Use your existing certificates
 
 By default, your certificates need to be placed in the following directories:
 
-
-    ./resources/dsa_pub.pem         # public certificate
-    ./sparkle/config/dsa_priv.pem   # private certificate
-
+```plaintext
+./resources/dsa_pub.pem         # public certificate
+./sparkle/config/dsa_priv.pem   # private certificate
+```
 
 ### Notes about the public certificate
 
@@ -150,8 +138,9 @@ The private certificate cannot be renamed nor placed elsewhere. If you have an e
 Be careful when handling the private certificate: you should never lose it nor share it. If you do, you'd lose the ability to sign your packages and users wouldn't be able to update your app. If someone takes it, they could sign the packages in your name and have your users install who knows what.
 
 Tips:
-* add it go your `.gitignore` or equivalent
-* make a backup of it
+
+- add it go your `.gitignore` or equivalent
+- make a backup of it
 
 ### Run `rake sparkle:setup` at any moment to make sure your config is OK
 
@@ -161,7 +150,7 @@ When all is good, move forward. If you need help, you can always open an issue o
 
 Sparkle makes it incredibly easy to add a "Check for updates" feature to your app.
 
-Sparkle's `SUUpdater` class has a shared updater instance that can serve as a `target` for Sparkle actions. To launch the typical Sparkle flow, call the `checkForUpdates:` action.
+Sparkle's `SUUpdater` class has a shared updater instance that can serve as a `target` for Sparkle actions. To launch the typical Sparkle 2 flow, call the `checkForUpdates:` action.
 
 So, to launch the "Check for updates" flow, you can call `SUUpdater.new.checkForUpdates`.
 
@@ -170,6 +159,7 @@ Here's an example based on the RubyMotion default OS X app example, "Hello". You
 This will add the classic "Check for updates..." entry on the menu; when the user clicks it, the nice default of experience of Sparkle will begin.
 
 In `menu.rb`, right below the line that adds the "Preferences" item:
+
 ```ruby
   sparkle = addItemWithTitle("Check for updates...", action: nil, keyEquivalent: '')
   sparkle.setTarget SUUpdater.new
@@ -186,11 +176,15 @@ Note that packaging with motion-sparkle-sandbox only works with the `:release` t
 
 Run the setup command again to make sure it's all good:
 
-    $ rake sparkle:setup
+```bash
+rake sparkle:setup
+```
 
 If you're ready to go, run the `sparkle:package` task:
 
-    $ rake sparkle:package
+```bash
+rake sparkle:package
+```
 
 This should create 3 files inside the `sparkle/release/` folder: a ZIP file of your app, an XML file and an HTML file with the release notes.
 
@@ -214,7 +208,9 @@ To do so, follow the same steps every time:
 
 ### 2. Build your app for release
 
-    $ rake build:release
+```bash
+rake build:release
+```
 
 ### 3. Update your Release Notes
 
@@ -226,7 +222,9 @@ You can either change these files inside the `sparkle/config/` folder, or simply
 
 Run the `sparkle:package` task and you'll be one step away from distribution.
 
-    $ rake sparkle:package
+```bash
+rake sparkle:package
+```
 
 ### 5. Upload
 
@@ -236,18 +234,20 @@ Sparkle for the win.
 
 ## Help, Limitations, Troubleshooting and Testing
 
-If you need further help, please open an [Issue on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/issues/).
+If you run into difficulties using Sparkle 2, make sure you review the [documentation](https://sparkle-project.org/documentation/) on [sparkle-project.org](https://sparkle-project.org). You can also search and open issues on https://github.com/sparkle-project/Sparkle/issues
+
+If you run into difficulties with `motion-sparkle-sandbox`, please open an [Issue on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/issues/).
+
 
 Limitations:
 
-  *   Only tested with Ruby 1.9.3-p448
-  *   Only works with ZIP files
-  *   Only works with :release build target
-  *   The Sparkle framework is horrendously copied multiple times
+- Only tested with Ruby 2.7.2
+- Only works with ZIP files
+- Only works with :release build target
 
-To further troubleshoot your case, you clone/fork the repo and go through the tests and the code.
+To further troubleshoot your case, you can clone/fork the repo and go through the tests and the code.
 
-To test, you can just run `$ bundle install` at the source of the repo to install the development dependencies and the run `$ rake` to execute the tests.
+To test, you can just run `bundle install` at the source of the repo to install the development dependencies and then run `rake spec` to execute the tests.
 
 Test coverage currently only extends to configuration and certificate generation checking.
 
@@ -257,8 +257,6 @@ Please do help with comments, issues and pull requests! The gem's repository is 
 
 ## Credits
 
-Contributors: [View all on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/graphs/contributors)
-
-Originally created by [Alexandre L. Solleiro](http://github.com/webcracy), and forked from [webcracy/motion-sparkle](https://github.com/webcracy/motion-sparkle)
-
-Huge thanks to [andymatuschak/Sparkle](https://github.com/andymatuschak/Sparkle) for creating and continuing to maintain Sparkle!
+- Contributors: [View all on Github](https://github.com/digitalmoksha/motion-sparkle-sandbox/graphs/contributors)
+- Originally created by [Alexandre L. Solleiro](http://github.com/webcracy), and forked from [webcracy/motion-sparkle](https://github.com/webcracy/motion-sparkle)
+- Huge thanks to [Andy Matuschak](https://andymatuschak.org) for creating Sparkle and to the [group of developers](https://github.com/orgs/sparkle-project/people) that maintain Sparkle!

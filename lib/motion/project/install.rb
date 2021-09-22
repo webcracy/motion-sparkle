@@ -1,75 +1,27 @@
 module Motion::Project
   class Sparkle
-
-    SPARKLE_ZIP_FILE = 'Sparkle.zip'
-
-    def sparkle_distrib
-      file_path = Pathname.new File.dirname(__FILE__)
-      distrib_path = "vendor/#{SPARKLE_ZIP_FILE}"
-      (file_path.parent.parent.parent + distrib_path).to_s
-      Pathname.new(sparkle_vendor_path + SPARKLE_ZIP_FILE)
+    def vendored_sparkle_path
+      Pathname.new(vendor_path + 'Pods/Sparkle')
     end
 
-    def sparkle_vendor_path
-      file_path = Pathname.new File.dirname(__FILE__)
-      (file_path.parent.parent.parent + 'vendor/').to_s
+    def vendored_sparkle_framework_path
+      Pathname.new(vendored_sparkle_path + 'Sparkle.framework')
     end
 
-    def sparkle_path
-      Pathname.new(vendor_path + 'Sparkle')
-    end
-
-    def sparkle_framework_path
-      Pathname.new(vendor_path + 'Sparkle/Sparkle.framework')
-    end
-
-    def sparkle_xpc_path
-      Pathname.new(vendor_path + 'Sparkle/XPCServices')
-    end
-
-    def sparkle_zipball
-      Pathname.new(vendor_path + SPARKLE_ZIP_FILE)
-    end
-
-    def copy_zipball
-      `cp #{sparkle_distrib} #{sparkle_zipball}`
-    end
-
-    def unzip
-      `unzip #{sparkle_zipball.to_s} -d #{vendor_path.to_s}`
-      `rm #{sparkle_zipball}`
+    def vendored_sparkle_xpc_path
+      Pathname.new(vendored_sparkle_path + 'XPCServices')
     end
 
     def installed?
-      File.directory?(sparkle_framework_path)
-    end
-
-    def install
-      FileUtils.rm_rf(sparkle_path) if File.directory?(sparkle_path) # force clean install
-      copy_zipball
-      unzip
-    end
-
-    def embed
-      @config.embedded_frameworks << sparkle_framework_path
-    end
-
-    def install_and_embed
-      install unless installed?
-      embed
+      File.directory?(vendored_sparkle_framework_path)
     end
 
     def verify_installation
       if installed?
-        App.info "Sparkle", "Framework installed in #{sparkle_framework_path.to_s}"
+        App.info 'Sparkle', "Framework installed in #{vendored_sparkle_framework_path}"
       else
-        App.fail "Sparkle framework not correctly copied to #{sparkle_framework_path.to_s}
-Run `rake sparkle:install` manually or, if the problem persists,
-please explain your setup and problem as an issue on GitHub at:
-https://github.com/digitalmoksha/motion-sparkle-sandbox/issues
-"
+        App.fail "Sparkle Cocoapod not correctly installed to #{vendored_sparkle_path}. Run `rake pod:install`."
       end
     end
-
   end
 end

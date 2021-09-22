@@ -1,9 +1,8 @@
 module Motion::Project
   class Sparkle
-
     def create_release_notes
       if File.exist?(release_notes_template_path)
-        File.open("#{release_notes_path}", "w") do |f|
+        File.open(release_notes_path.to_s, 'w') do |f|
           template = File.read(release_notes_template_path)
           f << ERB.new(template).result(binding)
         end
@@ -24,39 +23,39 @@ module Motion::Project
         f << "\n"
       end
       if appcast_file
-        App.info "Create", "./#{sparkle_release_path}/#{appcast.feed_filename}"
+        App.info 'Create', "./#{sparkle_release_path}/#{appcast.feed_filename}"
       else
-        App.info "Fail", "./#{sparkle_release_path}/#{appcast.feed_filename} not created"
+        App.info 'Fail', "./#{sparkle_release_path}/#{appcast.feed_filename} not created"
       end
     end
 
     def appcast_xml
       rss = REXML::Element.new 'rss'
-      rss.attributes['xmlns:atom'] = "http://www.w3.org/2005/Atom"
-      rss.attributes['xmlns:sparkle'] = "http://www.andymatuschak.org/xml-namespaces/sparkle"
-      rss.attributes['xmlns:version'] = "2.0"
-      rss.attributes['xmlns:dc'] = "http://purl.org/dc/elements/1.1/"
+      rss.attributes['xmlns:atom'] = 'http://www.w3.org/2005/Atom'
+      rss.attributes['xmlns:sparkle'] = 'http://www.andymatuschak.org/xml-namespaces/sparkle'
+      rss.attributes['xmlns:version'] = '2.0'
+      rss.attributes['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/'
       channel = rss.add_element 'channel'
       channel.add_element('title').text = @config.name
       channel.add_element('description').text = "#{@config.name} updates"
-      channel.add_element('link').text = @config.info_plist["SUFeedURL"]
+      channel.add_element('link').text = @config.info_plist['SUFeedURL']
       channel.add_element('language').text = 'en'
-      channel.add_element('pubDate').text = Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
+      channel.add_element('pubDate').text = Time.now.strftime('%a, %d %b %Y %H:%M:%S %z')
       atom_link = channel.add_element('atom:link')
-      atom_link.attributes['href'] = @config.info_plist["SUFeedURL"]
+      atom_link.attributes['href'] = @config.info_plist['SUFeedURL']
       atom_link.attributes['rel'] = 'self'
-      atom_link.attributes['type'] = "application/rss+xml"
+      atom_link.attributes['type'] = 'application/rss+xml'
       item = channel.add_element 'item'
       item.add_element('title').text = "#{@config.name} #{@config.short_version}"
-      item.add_element('pubDate').text = Time.now.strftime("%a, %d %b %Y %H:%M:%S %z")
+      item.add_element('pubDate').text = Time.now.strftime('%a, %d %b %Y %H:%M:%S %z')
       guid = item.add_element('guid')
       guid.text = "#{@config.name}-#{@config.short_version}"
       guid.attributes['isPermaLink'] = false
-      item.add_element('sparkle:releaseNotesLink').text = "#{appcast.notes_url}"
+      item.add_element('sparkle:releaseNotesLink').text = appcast.notes_url.to_s
       enclosure = item.add_element('enclosure')
-      enclosure.attributes['url'] = "#{appcast.package_url}"
-      enclosure.attributes['length'] = "#{@package_size}"
-      enclosure.attributes['type'] = "application/octet-stream"
+      enclosure.attributes['url'] = appcast.package_url.to_s
+      enclosure.attributes['length'] = @package_size.to_s
+      enclosure.attributes['type'] = 'application/octet-stream'
       enclosure.attributes['sparkle:version'] = @config.version
       enclosure.attributes['sparkle:shortVersionString'] = @config.short_version
       enclosure.attributes['sparkle:dsaSignature'] = @package_signature
@@ -64,11 +63,11 @@ module Motion::Project
     end
 
     def release_notes_template_path
-      sparkle_config_path + "release_notes.template.erb"
+      sparkle_config_path + 'release_notes.template.erb'
     end
 
     def release_notes_content_path
-      sparkle_config_path + "release_notes.content.html"
+      sparkle_config_path + 'release_notes.content.html'
     end
 
     def release_notes_path
@@ -87,16 +86,15 @@ module Motion::Project
       release_notes_content
     end
 
-
     class Appcast
       attr_accessor :base_url,
-        :feed_base_url,
-        :feed_filename,
-        :notes_base_url, 
-        :notes_filename, 
-        :package_base_url,
-        :package_filename,
-        :archive_folder
+                    :feed_base_url,
+                    :feed_filename,
+                    :notes_base_url,
+                    :notes_filename,
+                    :package_base_url,
+                    :package_filename,
+                    :archive_folder
 
       def initialize
         @feed_base_url = nil
@@ -120,8 +118,6 @@ module Motion::Project
       def package_url
         "#{package_base_url || base_url}/#{package_filename}"
       end
-
     end
-
   end
 end

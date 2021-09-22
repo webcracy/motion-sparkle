@@ -12,7 +12,10 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+vendor/Pods
+vendor/Podfile.lock
 Gemfile.lock
+__MACOSX
 
 # YARD artifacts
 .yardoc

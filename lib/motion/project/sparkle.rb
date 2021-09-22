@@ -1,14 +1,13 @@
 module Motion::Project
   class Sparkle
-
-    SPARKLE_ROOT = "sparkle"
+    SPARKLE_ROOT = 'sparkle'
     CONFIG_PATH = "#{SPARKLE_ROOT}/config"
     RELEASE_PATH = "#{SPARKLE_ROOT}/release"
 
     def initialize(config)
       @config = config
       publish :public_key, 'dsa_pub.pem'
-      install_and_embed
+      # verify_installation
     end
 
     def appcast
@@ -38,7 +37,7 @@ module Motion::Project
         raise "Unknown Sparkle config option #{key}"
       end
     end
-    alias_method :release, :publish
+    alias release publish
 
     def version(vstring)
       @config.version = vstring.to_s
@@ -60,18 +59,21 @@ module Motion::Project
     # File manipulation and certificates
 
     def add_to_gitignore
-      @ignorable = ['sparkle/release','sparkle/release/*','sparkle/config/dsa_priv.pem']
+      @ignorable = ['sparkle/release', 'sparkle/release/*', 'sparkle/config/dsa_priv.pem']
       return unless File.exist?(gitignore_path)
+
       File.open(gitignore_path, 'r') do |f|
         f.each_line do |line|
           @ignorable.delete(line) if @ignorable.include?(line)
         end
       end
-      File.open(gitignore_path, 'a') do |f|
-        @ignorable.each do |i|
-          f << "#{i}\n"
+      if @ignorable.any?
+        File.open(gitignore_path, 'a') do |f|
+          @ignorable.each do |i|
+            f << "#{i}\n"
+          end
         end
-      end if @ignorable.any?
+      end
       `cat #{gitignore_path}`
     end
 
@@ -90,24 +92,23 @@ module Motion::Project
 
     def generate_keys
       return false unless config_ok?
-      unless File.exist?(sparkle_config_path)
-        FileUtils.mkdir_p sparkle_config_path
-      end
+
+      FileUtils.mkdir_p sparkle_config_path unless File.exist?(sparkle_config_path)
       [dsa_param_path, private_key_path, public_key_path].each do |file|
-        if File.exist? file
-          App.info "Sparkle", "Error: file exists.
-There's already a '#{file}'. Be careful not to override or lose your certificates. \n
-Delete this file if you're sure. \n
-Aborting (no action performed)
-          "
-          return
-        end
+        next unless File.exist? file
+
+        App.info 'Sparkle', "Error: file exists.
+        There's already a '#{file}'. Be careful not to override or lose your certificates. \n
+        Delete this file if you're sure. \n
+        Aborting (no action performed)
+                  "
+        return
       end
       `#{openssl} dsaparam 2048 < /dev/urandom > #{dsa_param_path}`
       `#{openssl} gendsa #{dsa_param_path} -out #{private_key_path}`
       generate_public_key
       `rm #{dsa_param_path}`
-      App.info "Sparkle", "Generated private and public certificates.
+      App.info 'Sparkle', "Generated private and public certificates.
 Details:
   *  Private certificate: ./#{private_key_path}
   *  Public certificate: ./#{public_key_path}
@@ -125,7 +126,7 @@ If you lose it, your users will be unable to upgrade.
     # A few helpers
 
     def openssl
-      "/usr/bin/openssl"
+      '/usr/bin/openssl'
     end
 
     def project_path
@@ -137,7 +138,7 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def gitignore_path
-      project_path + ".gitignore"
+      project_path + '.gitignore'
     end
 
     def sparkle_release_path
@@ -149,11 +150,11 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def dsa_param_path
-      sparkle_config_path + "dsaparam.pem"
+      sparkle_config_path + 'dsaparam.pem'
     end
 
     def private_key_path
-      sparkle_config_path + "dsa_priv.pem"
+      sparkle_config_path + 'dsa_priv.pem'
     end
 
     def public_key_path
@@ -184,6 +185,5 @@ If you lose it, your users will be unable to upgrade.
     def app_file
       "#{app_name}.app"
     end
-
   end
 end
