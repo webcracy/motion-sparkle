@@ -15,7 +15,7 @@ require 'motion/project/rake_tasks'
 
 lib_dir_path = File.dirname(File.expand_path(__FILE__))
 
-POD_VERSION = '~> 2.0.0-beta.2'
+POD_VERSION = '~> 2.0.0-beta.3'
 
 unless @running_specs
   Motion::Project::App.setup do |app|
