@@ -13,13 +13,15 @@ module Motion::Project
       App.info 'Size', @package_size.to_s
 
       sign_package
-      create_appcast
       create_release_notes
+
       `open #{sparkle_release_path}`
     end
 
     def create_zip_file
       App.fail 'You need to build your app with the Release target to use Sparkle' unless File.exist?(app_bundle_path)
+
+      App.info 'Create', "./#{sparkle_release_path}/#{zip_file}"
 
       if File.exist?("#{sparkle_release_path}/#{zip_file}")
         App.fail "Release already exists at ./#{sparkle_release_path}/#{zip_file} (remove it manually with `rake sparkle:clean`)"
@@ -31,18 +33,24 @@ module Motion::Project
 
       FileUtils.mv "#{app_release_path}/#{zip_file}", "./#{sparkle_release_path}/"
 
-      App.info 'Create', "./#{sparkle_release_path}/#{zip_file}"
-
       @package_file = zip_file
       @package_size = File.size "./#{sparkle_release_path}/#{zip_file}"
     end
 
     def sign_package
       package = "./#{sparkle_release_path}/#{zip_file}"
-      @package_signature = `#{openssl} dgst -sha1 -binary < "#{package}" | #{openssl} dgst -dss1 -sign "#{private_key_path}" | #{openssl} enc -base64`
-      @package_signature = @package_signature.strip
+      sign_update_app = "#{vendored_sparkle_path}/bin/sign_update"
+      args = []
 
-      App.info 'Signature', "\"#{@package_signature}\""
+      if appcast.use_exported_private_key && File.exist?(private_key_path)
+        # -s <private-key>        The private EdDSA (ed25519) key
+        private_key = File.read(private_key_path)
+        args << "-s=#{private_key}"
+      end
+
+      results, _status = Open3.capture2e(sign_update_app, *args, package)
+
+      App.info 'Signature', results
     end
   end
 end

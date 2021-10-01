@@ -3,10 +3,11 @@ module Motion::Project
     SPARKLE_ROOT = 'sparkle'
     CONFIG_PATH = "#{SPARKLE_ROOT}/config"
     RELEASE_PATH = "#{SPARKLE_ROOT}/release"
+    EDDSA_PRIV_KEY = 'eddsa_priv.key'
+    DSA_PRIV_KEY = 'dsa_priv.pem'
 
     def initialize(config)
       @config = config
-      publish :public_key, 'dsa_pub.pem'
       # verify_installation
     end
 
@@ -17,19 +18,19 @@ module Motion::Project
     def publish(key, value)
       case key
       when :public_key
-        public_key value
+        self.public_EdDSA_key = value
       when :base_url
         appcast.base_url = value
-        feed_url appcast.feed_url
+        self.feed_url = appcast.feed_url
       when :feed_base_url
         appcast.feed_base_url = value
-        feed_url appcast.feed_url
+        self.feed_url = appcast.feed_url
       when :feed_filename
         appcast.feed_filename = value
-        feed_url appcast.feed_url
+        self.feed_url = appcast.feed_url
       when :version
         version value
-      when :notes_base_url, :package_base_url, :notes_filename, :package_filename
+      when :notes_base_url, :package_base_url, :notes_filename, :package_filename, :use_exported_private_key
         appcast.send "#{key}=", value
       when :archive_folder
         appcast.archive_folder = value
@@ -48,18 +49,26 @@ module Motion::Project
       "#{@config.short_version} (#{@config.version})"
     end
 
-    def feed_url(url)
+    def feed_url
+      @config.info_plist['SUFeedURL']
+    end
+
+    def feed_url=(url)
       @config.info_plist['SUFeedURL'] = url
     end
 
-    def public_key(path_in_resources_folder)
-      @config.info_plist['SUPublicDSAKeyFile'] = path_in_resources_folder
+    def public_EdDSA_key
+      @config.info_plist['SUPublicEDKey']
+    end
+
+    def public_EdDSA_key=(key)
+      @config.info_plist['SUPublicEDKey'] = key
     end
 
     # File manipulation and certificates
 
     def add_to_gitignore
-      @ignorable = ['sparkle/release', 'sparkle/release/*', 'sparkle/config/dsa_priv.pem']
+      @ignorable = ['sparkle/release', 'sparkle/release/*', private_key_path]
       return unless File.exist?(gitignore_path)
 
       File.open(gitignore_path, 'r') do |f|
@@ -90,44 +99,124 @@ module Motion::Project
       FileUtils.mkdir_p(sparkle_release_path) unless File.exist?(sparkle_release_path)
     end
 
+    def generate_keys_app
+      "#{vendored_sparkle_path}/bin/generate_keys"
+    end
+
     def generate_keys
       return false unless config_ok?
 
       FileUtils.mkdir_p sparkle_config_path unless File.exist?(sparkle_config_path)
-      [dsa_param_path, private_key_path, public_key_path].each do |file|
-        next unless File.exist? file
 
-        App.info 'Sparkle', "Error: file exists.
-        There's already a '#{file}'. Be careful not to override or lose your certificates. \n
-        Delete this file if you're sure. \n
-        Aborting (no action performed)
-                  "
+      if appcast.use_exported_private_key && File.exist?(private_key_path)
+        if public_EdDSA_key.present?
+          App.info 'Sparkle', <<~EXISTS
+            Private key already exported at `#{private_key_path}`` and will be used.
+            SUPublicEDKey already set
+
+            Be careful not to override or lose your certificates.
+            Delete this file if you're sure.
+            Aborting (no action performed)
+          EXISTS
+          .indent(11, skip_first_line: true)
+        else
+          App.info 'Sparkle', <<~EXISTS
+            Private key already exported at `#{private_key_path}`` and will be used.
+            SUPublicEDKey NOT SET
+
+            You can easily add the `SUPublicEDKey` by publishing the key in your Rakefile:
+
+            app.sparkle do
+              ...
+              publish :public_key, 'PUBLIC_KEY'
+            end
+
+            Be careful not to override or lose your certificates.
+            Delete this file if you're sure.
+            Aborting (no action performed)
+          EXISTS
+          .indent(11, skip_first_line: true)
+        end
+
         return
       end
-      `#{openssl} dsaparam 2048 < /dev/urandom > #{dsa_param_path}`
-      `#{openssl} gendsa #{dsa_param_path} -out #{private_key_path}`
-      generate_public_key
-      `rm #{dsa_param_path}`
-      App.info 'Sparkle', "Generated private and public certificates.
-Details:
-  *  Private certificate: ./#{private_key_path}
-  *  Public certificate: ./#{public_key_path}
-Warning:
-ADD YOUR PRIVATE CERTIFICATE TO YOUR `.gitignore` OR EQUIVALENT AND BACK IT UP!
-KEEP IT PRIVATE AND SAFE!
-If you lose it, your users will be unable to upgrade.
-      "
+
+      results, status = Open3.capture2e(generate_keys_app, '-p')
+
+      if status.success?
+        App.info 'Sparkle', 'Public/private keys found in the keychain'
+
+        if results.strip == public_EdDSA_key
+          App.info 'Sparkle', 'Keychain public key matches `SUPublicEDKey`'
+
+          if appcast.use_exported_private_key && !File.exist?(private_key_path)
+            # export the private key from the keychain
+          end
+        else
+          App.fail <<~NOT_MATCHED
+            Keychain public key DOES NOT match `SUPublicEDKey`
+
+                Keychain public key:      #{results.strip}
+                SUPublicEDKey public key: #{public_EdDSA_key}
+
+          NOT_MATCHED
+          .indent(11, skip_first_line: true)
+        end
+
+        return
+      end
+
+      create_private_key
+      export_private_key if appcast.use_exported_private_key
     end
 
-    def generate_public_key
-      `#{openssl} dsa -in #{private_key_path} -pubout -out #{public_key_path}`
+    # Create the private key in the keychain
+    def create_private_key
+      App.info 'Sparkle', 'Generating a new signing key into the Keychain. This may take a moment, depending on your machine.'
+      results, status = Open3.capture2e(generate_keys_app)
+
+      App.fail "Sparkle could not generate keys" unless status.success?
+
+      puts
+      puts results.lines[1..-1].join.indent(11)
+
+      # Extract the public key so we can use it in message
+      results, status = Open3.capture2e(generate_keys_app, '-p')
+
+      App.fail 'Unable to read public key' unless status.success?
+
+      puts <<~KEYS
+        You can easily add the `SUPublicEDKey` by publishing the key in your Rakefile:
+
+            app.sparkle do
+              ...
+              publish :public_key, '#{results.strip}'
+            end
+
+      KEYS
+      .indent(11)
+    end
+
+    # Export the private key from the keychain
+    def export_private_key
+      results, status = Open3.capture2e(generate_keys_app, '-x', private_key_path.to_s)
+
+      App.fail 'Unable to export private key' unless status.success?
+
+      App.info 'Sparkle', 'Private key has been exported from the keychain into the file:'
+      puts <<~KEYS
+
+            ./#{private_key_path}
+
+        ADD THIS PRIVATE KEY TO YOUR `.gitignore` OR EQUIVALENT AND BACK IT UP!
+        KEEP IT PRIVATE AND SAFE!
+        If you lose it, your users will be unable to upgrade, unless you used Apple code signing.
+        See https://sparkle-project.org/documentation/ for details
+      KEYS
+      .indent(11)
     end
 
     # A few helpers
-
-    def openssl
-      '/usr/bin/openssl'
-    end
 
     def project_path
       @project_path ||= Pathname.new(@config.project_dir)
@@ -149,17 +238,12 @@ If you lose it, your users will be unable to upgrade.
       project_path + CONFIG_PATH
     end
 
-    def dsa_param_path
-      sparkle_config_path + 'dsaparam.pem'
-    end
-
     def private_key_path
-      sparkle_config_path + 'dsa_priv.pem'
+      sparkle_config_path + EDDSA_PRIV_KEY
     end
 
-    def public_key_path
-      pub_key_file = @config.info_plist['SUPublicDSAKeyFile']
-      project_path + "resources/#{pub_key_file}"
+    def legacy_private_key_path
+      sparkle_config_path + DSA_PRIV_KEY
     end
 
     def app_bundle_path
@@ -175,7 +259,7 @@ If you lose it, your users will be unable to upgrade.
     end
 
     def zip_file
-      appcast.package_filename || "#{app_name}.zip"
+      appcast.package_filename || "#{app_name}.#{@config.short_version}.zip"
     end
 
     def archive_folder

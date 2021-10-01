@@ -1,8 +1,16 @@
-# Rake tasks
+# Sparkle specific rake tasks
 namespace :sparkle do
-  task :install do
-    sparkle = App.config.sparkle
-    sparkle.install
+  desc 'Sparkle Help'
+  task :help do
+    puts <<~HELP
+      During initial Sparkle setup, run these rake tasks:
+
+      1. `rake setup_certificates`
+      2. `rake setup`
+
+      Then after running `rake build:release`, you can run
+      `rake sparkle:package`
+    HELP
   end
 
   desc 'Setup Sparkle configuration'
@@ -11,7 +19,7 @@ namespace :sparkle do
     sparkle.setup
   end
 
-  desc 'Create a ZIP file with you application .app release build'
+  desc 'Create a ZIP file with your application .app release build'
   task :package do
     App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
@@ -23,36 +31,27 @@ namespace :sparkle do
     sparkle.generate_keys
   end
 
-  desc 'Sign the ZIP file with appropriate certificates'
+  desc 'Generate the EdDSA signature for a package'
   task :sign do
     App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.sign_package
   end
 
-  task :recreate_public_key do
-    sparkle = App.config.sparkle
-    sparkle.generate_public_key
-  end
-
-  task :copy_release_notes_templates do
-    App.config_without_setup.build_mode = :release
-    sparkle = App.config.sparkle
-    sparkle.copy_templates(force = true)
-  end
-
-  desc 'Generate the appcast xml feed'
-  task :feed do
-    App.config_without_setup.build_mode = :release
-    sparkle = App.config.sparkle
-    sparkle.create_appcast
-  end
-
-  desc "Generate the appcast using Sparkle's `generate_appcast`"
+  desc "Generate the appcast xml feed using Sparkle's `generate_appcast`"
   task :generate_appcast do
     App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
-    results = `#{sparkle.vendored_sparkle_path}/generate_appcast -f "#{sparkle.private_key_path}" "#{sparkle.archive_folder}"`
+    sparkle.generate_appcast
+  end
+
+  namespace :generate_appcast do
+    desc "Show help for Sparkle's `generate_appcast`"
+    task :help do
+      App.config_without_setup.build_mode = :release
+      sparkle = App.config.sparkle
+      sparkle.generate_appcast_help
+    end
   end
 
   desc 'Update the release notes of this build'
@@ -61,10 +60,6 @@ namespace :sparkle do
     sparkle = App.config.sparkle
     sparkle.create_release_notes
   end
-
-  # desc "Upload to configured location"
-  # task :upload do
-  # end
 
   desc 'Clean the Sparkle release folder'
   task :clean do

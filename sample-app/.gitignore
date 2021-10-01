@@ -1,0 +1,9 @@
+.DS_Store
+.bundle
+.repl_history
+build
+build-log
+vendor
+
+sparkle/release
+sparkle/config
