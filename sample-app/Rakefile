@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
-$:.unshift("/Library/RubyMotion/lib")
-$:.unshift("~/.rubymotion/rubymotion-templates")
+# frozen_string_literal: true
+
+$:.unshift('/Library/RubyMotion/lib')
+$:.unshift('~/.rubymotion/rubymotion-templates')
 
 require 'motion/project/template/osx'
 
@@ -19,8 +20,8 @@ Motion::Project::App.setup do |app|
   app.info_plist['CFBundleIconName'] = 'AppIcon'
   app.codesign_certificate = '-' # use an ad-hoc signing certificate
 
-  app.short_version = SHORT_VERSION   # CFBundleShortVersionString
-  app.version = `git rev-list --all | wc -l`.strip.to_i.to_s  # the build number
+  app.short_version = SHORT_VERSION # CFBundleShortVersionString
+  app.version = `git rev-list --all | wc -l`.strip.to_i.to_s # the build number
 
   app.sparkle do
     publish :base_url, 'http://example.com/your_app_folder/releases/'

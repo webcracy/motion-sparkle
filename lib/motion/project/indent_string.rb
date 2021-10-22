@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 # https://makandracards.com/makandra/6087-ruby-indent-a-string
 String.class_eval do
   def indent(count, char = ' ', skip_first_line: false)
-    gsub(/([^\n]*)(\n|$)/) do |match|
-      last_iteration = ($1 == "" && $2 == "")
-      line = ""
+    gsub(/([^\n]*)(\n|$)/) do |_match|
+      last_iteration = (Regexp.last_match(1) == '' && Regexp.last_match(2) == '')
+      line = ''
       line << (char * count) unless last_iteration || skip_first_line
-      line << $1
-      line << $2
+      line << Regexp.last_match(1)
+      line << Regexp.last_match(2)
 
       skip_first_line = false
 

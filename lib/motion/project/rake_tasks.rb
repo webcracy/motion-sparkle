@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Sparkle specific rake tasks
 namespace :sparkle do
   desc 'Sparkle Help'
