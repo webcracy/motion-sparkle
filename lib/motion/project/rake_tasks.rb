@@ -7,8 +7,8 @@ namespace :sparkle do
     puts <<~HELP
       During initial Sparkle setup, run these rake tasks:
 
-      1. `rake setup_certificates`
-      2. `rake setup`
+      1. `rake sparkle:setup_certificates`
+      2. `rake sparkle:setup`
 
       Then after running `rake build:release`, you can run
       `rake sparkle:package`

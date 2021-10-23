@@ -4,15 +4,15 @@ module Motion
   module Project
     class Sparkle
       def vendored_sparkle_path
-        Pathname.new("#{vendor_path}Pods/Sparkle")
+        vendor_path.join('Pods/Sparkle')
       end
 
       def vendored_sparkle_framework_path
-        Pathname.new("#{vendored_sparkle_path}Sparkle.framework")
+        vendored_sparkle_path.join('Sparkle.framework')
       end
 
       def vendored_sparkle_xpc_path
-        Pathname.new("#{vendored_sparkle_path}XPCServices")
+        vendored_sparkle_path.join('XPCServices')
       end
 
       def installed?

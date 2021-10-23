@@ -108,9 +108,9 @@ module Motion
         FileUtils.mkdir_p sparkle_config_path unless File.exist?(sparkle_config_path)
 
         if appcast.use_exported_private_key && File.exist?(private_key_path)
+          App.info 'Sparkle', "Private key already exported at `#{private_key_path}` and will be used."
           if public_EdDSA_key.present?
-            App.info 'Sparkle', <<~EXISTS
-              Private key already exported at `#{private_key_path}`` and will be used.
+            App.info '', <<~EXISTS
               SUPublicEDKey already set
 
               Be careful not to override or lose your certificates.
@@ -119,8 +119,7 @@ module Motion
             EXISTS
               .indent(11, skip_first_line: true)
           else
-            App.info 'Sparkle', <<~EXISTS
-              Private key already exported at `#{private_key_path}`` and will be used.
+            App.info '', <<~EXISTS
               SUPublicEDKey NOT SET
 
               You can easily add the `SUPublicEDKey` by publishing the key in your Rakefile:
@@ -224,31 +223,31 @@ module Motion
       end
 
       def vendor_path
-        @vendor_path ||= Pathname.new("#{project_path}vendor/")
+        @vendor_path ||= project_path.join('vendor')
       end
 
       def gitignore_path
-        "#{project_path}.gitignore"
+        project_path.join('.gitignore')
       end
 
       def sparkle_release_path
-        project_path + RELEASE_PATH
+        project_path.join(RELEASE_PATH)
       end
 
       def sparkle_config_path
-        project_path + CONFIG_PATH
+        project_path.join(CONFIG_PATH)
       end
 
       def private_key_path
-        sparkle_config_path + EDDSA_PRIV_KEY
+        sparkle_config_path.join(EDDSA_PRIV_KEY)
       end
 
       def legacy_private_key_path
-        sparkle_config_path + DSA_PRIV_KEY
+        sparkle_config_path.join(DSA_PRIV_KEY)
       end
 
       def app_bundle_path
-        Pathname.new @config.app_bundle_raw('MacOSX')
+        Pathname.new(@config.app_bundle_raw('MacOSX'))
       end
 
       def app_release_path
