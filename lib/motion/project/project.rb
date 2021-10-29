@@ -30,38 +30,17 @@ module Motion
     end
 
     class Builder
-      # Since we're using the sandboxed version of Sparkle, then we need to copy the
-      # xpc services to the proper folder and sign them.  This has to be done
-      # before we sign the app itself
+      # The XPC services are already residing in the Sparkle package.  But we need
+      # to re-sign the entire package to ensure all executables have the hardened
+      # runtime and correct certificate.
       #------------------------------------------------------------------------------
       def codesign_with_sparkle(config, platform)
         if App.config.embedded_frameworks.any? { |item| item.to_s.include?('Sparkle.framework') }
           bundle_path = App.config.app_bundle('MacOSX')
+          sparkle_path = File.join(bundle_path, 'Frameworks', 'Sparkle.framework')
 
-          if File.directory?(App.config.sparkle.vendored_sparkle_xpc_path)
-
-            App.info 'Sparkle', 'Removing unnecessary executables...'
-            sparkle_path = File.join(bundle_path, 'Frameworks/Sparkle.framework')
-            ['Autoupdate', 'Updater.app', 'Versions/A/Autoupdate', 'Versions/A/Updater.app'].each do |item|
-              bundle = File.join(sparkle_path, item)
-              FileUtils.rm_r(bundle) if File.exist?(bundle)
-            end
-
-            xpc_path = File.join(bundle_path, 'XPCServices')
-            App.info 'Sparkle', "Copying XPCServices to #{xpc_path}"
-
-            FileUtils.mkdir_p(xpc_path)
-            `cp -R #{App.config.sparkle.vendored_sparkle_xpc_path}/*.xpc "#{xpc_path}"`
-
-            Dir.glob("#{xpc_path}/*.xpc").each do |path|
-              App.info 'Codesign', path
-
-              results, _status = Open3.capture2e("#{App.config.sparkle.vendored_sparkle_path}/bin/codesign_xpc_service",
-                                                 App.config.codesign_certificate, File.expand_path(path))
-
-              puts results
-            end
-          end
+          App.info 'Codesign', sparkle_path
+          `/usr/bin/codesign --deep --force --sign '#{config.codesign_certificate}' -o runtime --preserve-metadata=entitlements "#{sparkle_path}"`
         end
 
         codesign_without_sparkle(config, platform)

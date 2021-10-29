@@ -137,11 +137,11 @@ module Motion
       end
 
       def release_notes_template_path
-        "#{sparkle_config_path}release_notes.template.erb"
+        sparkle_config_path.join('release_notes.template.erb')
       end
 
       def release_notes_content_path
-        "#{sparkle_config_path}release_notes.content.html"
+        sparkle_config_path.join('release_notes.content.html')
       end
 
       def release_notes_path
