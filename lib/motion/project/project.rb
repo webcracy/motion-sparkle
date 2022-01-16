@@ -39,8 +39,12 @@ module Motion
           bundle_path = App.config.app_bundle('MacOSX')
           sparkle_path = File.join(bundle_path, 'Frameworks', 'Sparkle.framework')
 
-          App.info 'Codesign', sparkle_path
-          `/usr/bin/codesign --deep --force --sign '#{config.codesign_certificate}' -o runtime --preserve-metadata=entitlements "#{sparkle_path}"`
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/Autoupdate"`
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/Updater.app"`
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/XPCServices/org.sparkle-project.InstallerLauncher.xpc"`
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime --entitlements "./vendor/Pods/Sparkle/Entitlements/org.sparkle-project.Downloader.entitlements" "#{sparkle_path}/Versions/B/XPCServices/org.sparkle-project.Downloader.xpc"` # rubocop:disable Layout/LineLength
+
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}"`
         end
 
         codesign_without_sparkle(config, platform)

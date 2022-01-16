@@ -15,7 +15,7 @@ archive:distribution`. With a valid distribution certificate.
 In your `Rakefile`, set the following values:
 
 ```ruby
-#This is only an example, you certificate name may be different.
+#This is only an example, your certificate name may be different.
 app.development do
   app.codesign_certificate = "Mac Developer: xxxxx"
 end
