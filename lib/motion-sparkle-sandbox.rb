@@ -12,10 +12,11 @@ require 'motion/project/templates'
 require 'motion/project/appcast'
 require 'motion/project/project'
 require 'motion/project/rake_tasks'
+require 'motion/project/indent_string'
 
 lib_dir_path = File.dirname(File.expand_path(__FILE__))
 
-POD_VERSION = '~> 2.0.0-beta.3'
+POD_VERSION = '~> 2.0.0'
 
 unless @running_specs
   Motion::Project::App.setup do |app|

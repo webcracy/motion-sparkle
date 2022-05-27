@@ -1,0 +1,44 @@
+# frozen_string_literal: true
+
+$:.unshift('/Library/RubyMotion/lib')
+$:.unshift('~/.rubymotion/rubymotion-templates')
+
+require 'motion/project/template/osx'
+
+SHORT_VERSION = '0.5'
+
+begin
+  require 'bundler'
+  Bundler.require
+rescue LoadError
+end
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'sample-app'
+  app.deployment_target = '10.14'
+  app.info_plist['CFBundleIconName'] = 'AppIcon'
+  app.codesign_certificate = '-' # use an ad-hoc signing certificate
+
+  app.short_version = SHORT_VERSION # CFBundleShortVersionString
+  app.version = `git rev-list --all | wc -l`.strip.to_i.to_s # the build number
+
+  app.sparkle do
+    publish :base_url, 'http://example.com/your_app_folder/releases/'
+    publish :public_key, '06Iq4HGJFToJrA8lqWWG0SCqqtGXLuEN1Wgy/CVJBnI='
+    publish :archive_folder, '../published/releases/v2.2/'
+
+    # Appcast Feed
+    # publish :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
+    publish :feed_filename, 'releases.xml' # default
+
+    # Release Notes
+    publish :notes_base_url, 'http://downloads.example.com/releases_notes/' # defaults to base_url
+    # publish :notes_filename, 'test'
+
+    # App Package
+    # publish :package_base_url, 'http://downloads.example.com/releases/' # defaults to base_url
+
+    # publish :use_exported_private_key, true
+  end
+end

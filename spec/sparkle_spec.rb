@@ -1,103 +1,138 @@
 # frozen_string_literal: true
 
-require File.expand_path('spec_helper', __dir__)
+require File.expand_path('spec_utils', __dir__)
 
 module Motion
   module Project
     class Config
       attr_writer :project_dir
     end
-  end; end
+  end
+end
 
 # rubocop:disable Metrics/BlockLength
 describe 'motion-sparkle-sandbox' do
-  extend SpecHelper::TemporaryDirectory
+  before(:all) do
+    SpecUtils::TemporaryDirectory.teardown
+    SpecUtils::TemporaryDirectory.setup
 
-  before do
-    unless @completed_setup
-      teardown_temporary_directory
-      setup_temporary_directory
+    FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}resources")
+    FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}vendor")
+    FileUtils.touch("#{SpecUtils::TemporaryDirectory.directory}.gitignore")
+  end
 
-      FileUtils.mkdir_p(temporary_directory + 'resources')
-      FileUtils.mkdir_p(temporary_directory + 'vendor')
-      FileUtils.touch(temporary_directory + '.gitignore')
-
+  context 'configuration' do
+    before do
       @config = App.config
-      @config.project_dir = temporary_directory.to_s
+      @config.sparkle = nil
+      @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
+      @config.instance_eval do
+        sparkle do
+          release :base_url, 'http://example.com/'
+        end
+      end
+    end
+
+    describe 'base url' do
+      it 'base url should be set correctly' do
+        expect(@config.sparkle.appcast.base_url).to eq 'http://example.com/'
+      end
+    end
+
+    describe 'feed url' do
+      it 'uses default value' do
+        expect(@config.info_plist['SUFeedURL']).to eq 'http://example.com/releases.xml'
+      end
+
+      it 'uses feed_base_url' do
+        @config.sparkle.publish(:feed_base_url, 'http://rss.example.com/')
+
+        expect(@config.info_plist['SUFeedURL']).to eq 'http://rss.example.com/releases.xml'
+      end
+
+      it 'uses feed_filename' do
+        @config.sparkle.publish(:feed_base_url, 'http://rss.example.com/')
+        @config.sparkle.publish(:feed_filename, 'example.xml')
+
+        expect(@config.info_plist['SUFeedURL']).to eq 'http://rss.example.com/example.xml'
+      end
+    end
+
+    describe 'appcast package base url' do
+      it 'uses default value' do
+        expect(@config.sparkle.appcast.package_base_url).to eq 'http://example.com/'
+      end
+
+      it 'uses package_base_url' do
+        @config.sparkle.publish(:package_base_url, 'http://download.example.com/')
+
+        expect(@config.sparkle.appcast.package_base_url).to eq 'http://download.example.com/'
+      end
+    end
+
+    describe 'appcast package filename' do
+      it 'has no default value' do
+        expect(@config.sparkle.appcast.package_filename).to be_nil
+      end
+
+      it 'uses package_filename' do
+        @config.sparkle.publish(:package_filename, 'example.zip')
+
+        expect(@config.sparkle.appcast.package_filename).to eq 'example.zip'
+      end
+    end
+
+    describe 'appcast releases notes base url' do
+      it 'uses default value' do
+        expect(@config.sparkle.appcast.notes_base_url).to eq 'http://example.com/'
+      end
+
+      it 'uses notes_base_url' do
+        @config.sparkle.publish(:notes_base_url, 'http://download.example.com/')
+
+        expect(@config.sparkle.appcast.notes_base_url).to eq 'http://download.example.com/'
+      end
+    end
+
+    describe 'appcast release notes filename' do
+      it 'has no default value' do
+        expect(@config.sparkle.appcast.notes_filename).to be_nil
+      end
+
+      it 'uses package_filename' do
+        @config.sparkle.publish(:notes_filename, 'release_notes.html')
+
+        expect(@config.sparkle.appcast.notes_filename).to eq 'release_notes.html'
+      end
+    end
+
+    it 'version and short version should be set correctly' do
+      @config.sparkle.publish(:version, '1.0')
+
+      expect(@config.version).to eq '1.0'
+      expect(@config.short_version).to eq '1.0'
+    end
+  end
+
+  context 'cocoapod' do
+    before do
+      @config = App.config
+      @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
       @config.instance_eval do
         pods do
           pod 'Sparkle', POD_VERSION
         end
-
-        sparkle do
-          release :base_url, 'http://example.com'
-          release :public_key, 'public_key.pem'
-          release :version, '1.0'
-          # Optional config options
-          release :feed_base_url, 'http://rss.example.com'
-          release :feed_filename, 'example.xml'
-          release :notes_base_url, 'http://www.example.com'
-          release :notes_filename, 'example.html'
-          release :package_base_url, 'http://download.example.com'
-          release :package_filename, 'example.zip'
-        end
       end
 
       Rake::Task['pod:install'].invoke
-      Rake::Task['sparkle:setup'].invoke
-      Rake::Task['sparkle:setup_certificates'].invoke
-
-      @completed_setup = true
     end
-  end
 
-  it "Sparkle's release base url should be set correctly" do
-    @config.sparkle.appcast.base_url.should.equal 'http://example.com'
-  end
+    it 'Sparkle framework pod should be embedded' do
+      sparkle_framework_path = 'vendor/Pods/Sparkle/Sparkle.framework'
+      @config.pods.pods_libraries
 
-  it "Sparkle's feed url should be set correctly" do
-    @config.info_plist['SUFeedURL'].should.equal 'http://rss.example.com/example.xml'
-  end
-
-  it "Sparkle's release notes url should be set correctly" do
-    @config.sparkle.appcast.notes_url.should.equal 'http://www.example.com/example.html'
-  end
-
-  it "Sparkle's appcast package url should be set correctly" do
-    @config.sparkle.appcast.package_url.should.equal 'http://download.example.com/example.zip'
-  end
-
-  it "Sparkle's public key should have custom name" do
-    @config.info_plist['SUPublicDSAKeyFile'].should.equal 'public_key.pem'
-  end
-
-  it 'Version and short version should be set correctly' do
-    @config.version.should.equal '1.0'
-    @config.short_version.should.equal '1.0'
-  end
-
-  it 'Version should be same for short_version and version' do
-    @config.version.should.equal @config.short_version
-  end
-
-  it 'Sparkle framework pod should be embedded' do
-    sparkle_framework_path = 'vendor/Pods/Sparkle/Sparkle.framework'
-    @config.pods.pods_libraries
-
-    @config.embedded_frameworks.first.end_with?(sparkle_framework_path).should.equal true
-  end
-
-  it 'should create private certificate' do
-    File.exist?(@config.sparkle.private_key_path.to_s).should.equal true
-  end
-
-  it 'should create public certificate' do
-    File.exist?(@config.sparkle.public_key_path.to_s).should.equal true
-  end
-
-  it 'should add files to gitignore' do
-    a = `cat .gitignore`
-    a.strip.should.not.equal ''
+      expect(@config.embedded_frameworks.first.end_with?(sparkle_framework_path)).to be_truthy
+    end
   end
 end
 # rubocop:enable Metrics/BlockLength
