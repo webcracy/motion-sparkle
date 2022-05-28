@@ -13,7 +13,43 @@ $:.unshift("#{ROOT}lib".to_s)
 require 'motion/project/template/osx'
 require 'motion-sparkle-sandbox'
 
+# necessary for us to be able to overwrite the `project_dir`
+module Motion
+  module Project
+    class Config
+      attr_writer :project_dir
+    end
+  end
+end
+
 module SpecUtils
+  module SparkleSetup
+    # run from a before(:suite)
+    def self.initial_install
+      SpecUtils::TemporaryDirectory.setup
+
+      FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}/resources")
+      FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}/vendor")
+      FileUtils.touch("#{SpecUtils::TemporaryDirectory.directory}/.gitignore")
+
+      @config = App.config
+      @config.sparkle = nil
+      @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
+      @config.instance_eval do
+        pods do
+          pod 'Sparkle', POD_VERSION
+        end
+      end
+
+      Rake::Task['pod:install'].invoke
+    end
+
+    # run from an after(:suite)
+    def self.final_deinstall
+      SpecUtils::TemporaryDirectory.teardown
+    end
+  end
+
   module TemporaryDirectory
     TEMPORARY_DIRECTORY = ROOT + 'tmp' # rubocop:disable Style/StringConcatenation
 

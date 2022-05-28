@@ -2,37 +2,20 @@
 
 require File.expand_path('spec_utils', __dir__)
 
-module Motion
-  module Project
-    class Config
-      attr_writer :project_dir
-    end
-  end
-end
-
 # rubocop:disable Metrics/BlockLength
 describe 'motion-sparkle-sandbox' do
   before(:all) do
-    SpecUtils::TemporaryDirectory.teardown
-    SpecUtils::TemporaryDirectory.setup
-
-    FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}resources")
-    FileUtils.mkdir_p("#{SpecUtils::TemporaryDirectory.directory}vendor")
-    FileUtils.touch("#{SpecUtils::TemporaryDirectory.directory}.gitignore")
+    @config = App.config
+    @config.sparkle = nil
+    @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
+    @config.instance_eval do
+      sparkle do
+        release :base_url, 'http://example.com/'
+      end
+    end
   end
 
   context 'configuration' do
-    before do
-      @config = App.config
-      @config.sparkle = nil
-      @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
-      @config.instance_eval do
-        sparkle do
-          release :base_url, 'http://example.com/'
-        end
-      end
-    end
-
     describe 'base url' do
       it 'base url should be set correctly' do
         expect(@config.sparkle.appcast.base_url).to eq 'http://example.com/'
@@ -115,22 +98,10 @@ describe 'motion-sparkle-sandbox' do
   end
 
   context 'cocoapod' do
-    before do
-      @config = App.config
-      @config.project_dir = SpecUtils::TemporaryDirectory.directory.to_s
-      @config.instance_eval do
-        pods do
-          pod 'Sparkle', POD_VERSION
-        end
-      end
-
-      Rake::Task['pod:install'].invoke
-    end
-
     it 'Sparkle framework pod should be embedded' do
       sparkle_framework_path = 'vendor/Pods/Sparkle/Sparkle.framework'
-      @config.pods.pods_libraries
 
+      @config.pods.pods_libraries
       expect(@config.embedded_frameworks.first.end_with?(sparkle_framework_path)).to be_truthy
     end
   end
