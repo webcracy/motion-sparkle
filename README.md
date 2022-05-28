@@ -34,11 +34,11 @@ After building your app for release and running `rake sparkle:package`, all you 
 
 - Use the latest version of **motion-sparkle-sandbox**
 - You will need RubyMotion version 5.0 or above
-- Sparkle 2 now requires Mac OS X 10.11 El Capitan) or later
+- Sparkle 2 now requires Mac OS X 10.11 (El Capitan) or later
 
 ## Installation
 
-In your project's Gemfile, add:
+In your project's `Gemfile`, add:
 
 ```ruby
 # Gemfile
@@ -103,8 +103,6 @@ If everything is OK, you should be informed that it's time to generate or config
 ## Certificate configuration
 
 For security, Sparkle 2 allows you to sign your releases with a private certificate before distribution: when the user tries to install an update, Sparkle 2 will check the package using the signature provided in the XML file and the public certificate contained in the running application.
-
-_Currently, `motion-sparkle-sandbox` does not support configuring `EdDSA` signatures, only `DSA`._
 
 `motion-sparkle-sandbox` makes it very easy to handle this. In fact, after the first setup, it becomes completely transparent to you as all is handled when you run `rake sparkle:package`.
 
