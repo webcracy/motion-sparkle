@@ -29,6 +29,7 @@ describe 'motion-sparkle-sandbox' do
 
       it 'uses feed_base_url' do
         @config.sparkle.publish(:feed_base_url, 'http://rss.example.com/')
+        @config.sparkle.after_initialize
 
         expect(@config.info_plist['SUFeedURL']).to eq 'http://rss.example.com/releases.xml'
       end
@@ -36,6 +37,7 @@ describe 'motion-sparkle-sandbox' do
       it 'uses feed_filename' do
         @config.sparkle.publish(:feed_base_url, 'http://rss.example.com/')
         @config.sparkle.publish(:feed_filename, 'example.xml')
+        @config.sparkle.after_initialize
 
         expect(@config.info_plist['SUFeedURL']).to eq 'http://rss.example.com/example.xml'
       end

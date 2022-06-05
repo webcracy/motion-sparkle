@@ -15,29 +15,22 @@ module Motion
         # verify_installation
       end
 
+      def after_initialize
+        self.feed_url = appcast.feed_url
+      end
+
       def appcast
-        @appcast ||= Appcast.new
+        @appcast ||= Appcast.new(self)
       end
 
       def publish(key, value)
+        return if appcast.process_option(key, value)
+
         case key
         when :public_key
-          self.public_EdDSA_key = value
-        when :base_url
-          appcast.base_url = value
-          self.feed_url = appcast.feed_url
-        when :feed_base_url
-          appcast.feed_base_url = value
-          self.feed_url = appcast.feed_url
-        when :feed_filename
-          appcast.feed_filename = value
-          self.feed_url = appcast.feed_url
+          self.public_ed_dsa_key = value
         when :version
-          version value
-        when :package_base_url, :package_filename, :notes_base_url, :notes_filename, :use_exported_private_key
-          appcast.send "#{key}=", value
-        when :archive_folder
-          appcast.archive_folder = value
+          version(value)
         else
           raise "Unknown Sparkle config option #{key}"
         end
@@ -61,15 +54,13 @@ module Motion
         @config.info_plist['SUFeedURL'] = url
       end
 
-      # rubocop:disable Naming/MethodName
-      def public_EdDSA_key
+      def public_ed_dsa_key
         @config.info_plist['SUPublicEDKey']
       end
 
-      def public_EdDSA_key=(key)
+      def public_ed_dsa_key=(key)
         @config.info_plist['SUPublicEDKey'] = key
       end
-      # rubocop:enable Naming/MethodName
 
       # File manipulation and certificates
 
@@ -109,7 +100,7 @@ module Motion
 
         if appcast.use_exported_private_key && File.exist?(private_key_path)
           App.info 'Sparkle', "Private key already exported at `#{private_key_path}` and will be used."
-          if public_EdDSA_key.present?
+          if public_ed_dsa_key.present?
             App.info '', <<~EXISTS
               SUPublicEDKey already set
 
@@ -139,12 +130,12 @@ module Motion
           return
         end
 
-        results, status = Open3.capture2e(generate_keys_app, '-p')
+        results, status = Open3.capture2e(generate_keys_app, '-p', '--account', appcast.cli_options[:account])
 
         if status.success?
-          App.info 'Sparkle', 'Public/private keys found in the keychain'
+          App.info 'Sparkle', "Public/private keys found in the keychain for account #{appcast.cli_options[:account]}"
 
-          if results.strip == public_EdDSA_key
+          if results.strip == public_ed_dsa_key
             App.info 'Sparkle', 'Keychain public key matches `SUPublicEDKey`'
 
             if appcast.use_exported_private_key && !File.exist?(private_key_path)
@@ -155,7 +146,7 @@ module Motion
               Keychain public key DOES NOT match `SUPublicEDKey`
 
                   Keychain public key:      #{results.strip}
-                  SUPublicEDKey public key: #{public_EdDSA_key}
+                  SUPublicEDKey public key: #{public_ed_dsa_key}
 
             NOT_MATCHED
               .indent(11, skip_first_line: true)
@@ -173,7 +164,7 @@ module Motion
       def create_private_key
         App.info 'Sparkle',
                  'Generating a new signing key into the Keychain. This may take a moment, depending on your machine.'
-        results, status = Open3.capture2e(generate_keys_app)
+        results, status = Open3.capture2e(generate_keys_app, '--account', appcast.cli_options[:account])
 
         App.fail 'Sparkle could not generate keys' unless status.success?
 
@@ -181,7 +172,7 @@ module Motion
         puts results.lines[1..].join.indent(11)
 
         # Extract the public key so we can use it in message
-        results, status = Open3.capture2e(generate_keys_app, '-p')
+        results, status = Open3.capture2e(generate_keys_app, '-p', '--account', appcast.cli_options[:account])
 
         App.fail 'Unable to read public key' unless status.success?
 
@@ -199,7 +190,7 @@ module Motion
 
       # Export the private key from the keychain
       def export_private_key
-        _results, status = Open3.capture2e(generate_keys_app, '-x', private_key_path.to_s)
+        _results, status = Open3.capture2e(generate_keys_app, '-x', private_key_path.to_s, '--account', appcast.cli_options[:account])
 
         App.fail 'Unable to export private key' unless status.success?
 
@@ -214,6 +205,92 @@ module Motion
           See https://sparkle-project.org/documentation/ for details
         KEYS
           .indent(11)
+      end
+
+      # copy the release notes and zip archive into the releases_folder,
+      # where the appcast will get built
+      def copy_to_release
+        path = (project_path + releases_folder).realpath
+        zip_file_path = (sparkle_release_path + zip_file).realpath
+
+        [release_notes_path, zip_file_path].each do |file|
+          FileUtils.cp(file, "#{path}/")
+          App.info 'Copied', "./#{path}/#{file}"
+        end
+      end
+
+      # Generate the appcast.
+      # Note: We do not support the old DSA keys, only the newer EdDSA keys.
+      #       See https://sparkle-project.org/documentation/eddsa-migration
+      def generate_appcast
+        generate_appcast_app = "#{vendored_sparkle_path}/bin/generate_appcast"
+        path = (project_path + releases_folder).realpath
+        appcast_filename = (path + appcast.feed_filename)
+        appcast.cli_options[:output_path] = appcast_filename
+
+        FileUtils.mkdir_p(path) unless File.exist?(path)
+
+        App.info('Sparkle', "Generating appcast using `#{generate_appcast_app}`")
+        puts "from files in `#{path}`...".indent(11)
+
+        args = appcast.prepare_args
+
+        App.info 'Executing', [generate_appcast_app, *args, path.to_s].join(' ')
+
+        results, status = Open3.capture2e(generate_appcast_app, *args, path.to_s)
+
+        App.info('Sparkle', "Saved appcast to `#{appcast_filename}`") if status.success?
+        puts results.indent(11)
+
+        return unless status.success?
+
+        puts
+        puts "SUFeedURL     : #{feed_url}".indent(11)
+        puts "SUPublicEDKey : #{public_ed_dsa_key}".indent(11)
+      end
+
+      def generate_appcast_help
+        generate_appcast_app = "#{vendored_sparkle_path}/bin/generate_appcast"
+        results, _status = Open3.capture2e(generate_appcast_app, '--help')
+
+        puts results
+      end
+
+      def create_release_notes
+        App.fail "Release notes template not found as expected at ./#{release_notes_template_path}" unless File.exist?(release_notes_template_path)
+
+        create_release_folder
+
+        File.open(release_notes_path.to_s, 'w') do |f|
+          template = File.read(release_notes_template_path)
+          f << ERB.new(template).result(binding)
+        end
+
+        App.info 'Create', "./#{release_notes_path}"
+      end
+
+      def release_notes_template_path
+        sparkle_config_path.join('release_notes.template.erb')
+      end
+
+      def release_notes_content_path
+        sparkle_config_path.join('release_notes.content.html')
+      end
+
+      def release_notes_path
+        sparkle_release_path + (appcast.notes_filename || "#{app_name}.#{@config.short_version}.html")
+      end
+
+      def release_notes_content
+        if File.exist?(release_notes_content_path)
+          File.read(release_notes_content_path)
+        else
+          App.fail "Missing #{release_notes_content_path}"
+        end
+      end
+
+      def release_notes_html
+        release_notes_content
       end
 
       # A few helpers
@@ -242,10 +319,6 @@ module Motion
         sparkle_config_path.join(EDDSA_PRIV_KEY)
       end
 
-      def legacy_private_key_path
-        sparkle_config_path.join(DSA_PRIV_KEY)
-      end
-
       def app_bundle_path
         Pathname.new(@config.app_bundle_raw('MacOSX'))
       end
@@ -262,8 +335,8 @@ module Motion
         appcast.package_filename || "#{app_name}.#{@config.short_version}.zip"
       end
 
-      def archive_folder
-        appcast.archive_folder
+      def releases_folder
+        appcast.releases_folder
       end
 
       def app_file

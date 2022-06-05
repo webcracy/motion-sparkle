@@ -10,6 +10,7 @@ module Motion
       def sparkle(&block)
         @sparkle ||= Motion::Project::Sparkle.new(self)
         @sparkle.instance_eval(&block) if block
+        @sparkle.after_initialize
         @sparkle
       end
     end

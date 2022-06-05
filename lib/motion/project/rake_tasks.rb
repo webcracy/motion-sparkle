@@ -1,17 +1,23 @@
 # frozen_string_literal: true
 
 # Sparkle specific rake tasks
+# rubocop:disable Metrics/BlockLength
 namespace :sparkle do
   desc 'Sparkle Help'
   task :help do
     puts <<~HELP
+
+
       During initial Sparkle setup, run these rake tasks:
 
       1. `rake sparkle:setup_certificates`
       2. `rake sparkle:setup`
 
       Then after running `rake build:release`, you can run
-      `rake sparkle:package`
+
+      3. `rake sparkle:package`            create the zipped package and release notes
+      4. `rake sparkle:copy_to_release`    copy package/notes into release folder
+      5. `rake sparkle:generate_appcast`   generate the appcast
     HELP
   end
 
@@ -38,6 +44,13 @@ namespace :sparkle do
     App.config_without_setup.build_mode = :release
     sparkle = App.config.sparkle
     sparkle.sign_package
+  end
+
+  desc 'Copy the release notes and zip archive to the release folder'
+  task :copy_to_release do
+    App.config_without_setup.build_mode = :release
+    sparkle = App.config.sparkle
+    sparkle.copy_to_release
   end
 
   desc "Generate the appcast xml feed using Sparkle's `generate_appcast`"
@@ -83,3 +96,4 @@ namespace :clean do
     end
   end
 end
+# rubocop:enable Metrics/BlockLength
