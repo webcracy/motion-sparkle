@@ -7,3 +7,4 @@ vendor
 
 sparkle/release
 sparkle/config
+sparkle/config/eddsa_priv.key

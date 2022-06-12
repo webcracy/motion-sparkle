@@ -27,7 +27,7 @@ module Motion
       end
 
       def check_public_key
-        return true if public_EdDSA_key.present?
+        return true if public_ed_dsa_key.present?
 
         App.fail 'Sparkle :public_key is nil or blank. Please check your Rakefile.'
       end
@@ -45,7 +45,7 @@ module Motion
           App.fail "Missing `#{private_key_path}`. Please run `rake sparkle:setup_certificates` or check the docs to know where to put them."
         end
 
-        unless public_EdDSA_key.present?
+        unless public_ed_dsa_key.present?
           return false if silence
 
           App.fail "Missing `#{public_key_path}`. Did you configure `release :public_key` correctly in the Rakefile? Advanced: recreate your public key with `rake sparkle:recreate_public_key`"

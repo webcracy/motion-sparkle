@@ -25,8 +25,8 @@ Motion::Project::App.setup do |app|
 
   app.sparkle do
     publish :base_url, 'http://example.com/your_app_folder/releases/'
-    publish :public_key, '06Iq4HGJFToJrA8lqWWG0SCqqtGXLuEN1Wgy/CVJBnI='
-    publish :archive_folder, '../published/releases/v2.2/'
+    publish :public_key, '1/eJupmw4JH+iFQIlh99nS2qvwYealJsNzFN3LL6FFE=x'
+    publish :releases_folder, 'tmp/releases/v2.2/'
 
     # Appcast Feed
     # publish :feed_base_url, 'http://downloads.example.com/releases' # defaults to base_url
@@ -40,5 +40,8 @@ Motion::Project::App.setup do |app|
     # publish :package_base_url, 'http://downloads.example.com/releases/' # defaults to base_url
 
     # publish :use_exported_private_key, true
+
+    publish :account, 'motion-sparkle-sandbox.sample-app'
+    publish :full_release_notes_url, 'http://example.com/full_release_notes_changed_again.html'
   end
 end
