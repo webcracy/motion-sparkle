@@ -40,10 +40,18 @@ module Motion
           bundle_path = App.config.app_bundle('MacOSX')
           sparkle_path = File.join(bundle_path, 'Frameworks', 'Sparkle.framework')
 
+          # strip out any header files, as they are not needed for a built product, and Xcode
+          # typically does this.  Their permissions are set such that it conflicts
+          # with building the deltas. See https://github.com/sparkle-project/Sparkle/issues/1972
+          `rm -fr "#{sparkle_path}/Versions/B/PrivateHeaders"`
+          `rm "#{sparkle_path}/PrivateHeaders"`
+          `rm -fr "#{sparkle_path}/Versions/B/Headers"`
+          `rm "#{sparkle_path}/Headers"`
+
           `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/Autoupdate"`
           `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/Updater.app"`
-          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/XPCServices/org.sparkle-project.InstallerLauncher.xpc"`
-          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime --entitlements "./vendor/Pods/Sparkle/Entitlements/org.sparkle-project.Downloader.entitlements" "#{sparkle_path}/Versions/B/XPCServices/org.sparkle-project.Downloader.xpc"` # rubocop:disable Layout/LineLength
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}/Versions/B/XPCServices/Installer.xpc"`
+          `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime --entitlements "./vendor/Pods/Sparkle/Entitlements/Downloader.entitlements" "#{sparkle_path}/Versions/B/XPCServices/Downloader.xpc"` # rubocop:disable Layout/LineLength
 
           `/usr/bin/codesign -f -s "#{config.codesign_certificate}" -o runtime "#{sparkle_path}"`
         end

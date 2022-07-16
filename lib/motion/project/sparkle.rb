@@ -210,12 +210,12 @@ module Motion
       # copy the release notes and zip archive into the releases_folder,
       # where the appcast will get built
       def copy_to_release
-        path = (project_path + releases_folder).realpath
-        zip_file_path = (sparkle_release_path + zip_file).realpath
+        destination_path = (project_path + releases_folder).realpath
+        zip_file_path = (sparkle_release_path + zip_file)
 
         [release_notes_path, zip_file_path].each do |file|
-          FileUtils.cp(file, "#{path}/")
-          App.info 'Copied', "./#{path}/#{file}"
+          FileUtils.cp(file, "#{destination_path}/")
+          App.info 'Copied', "#{destination_path}/#{file}"
         end
       end
 

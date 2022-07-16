@@ -19,7 +19,7 @@ module Motion
 
         CLI_OPTIONS = {
           account: '--account',
-          private_eddsa_key: '-s',
+          private_ed_key_file: '--ed-key-file',
           download_url_prefix: '--download-url-prefix',
           release_notes_url_prefix: '--release-notes-url-prefix',
           full_release_notes_url: '--full-release-notes-url',
@@ -93,7 +93,7 @@ module Motion
           args = []
 
           account(args)
-          private_eddsa_key(args)
+          private_ed_key_file(args)
           download_url_prefix(args)
           release_notes_url_prefix(args)
           full_release_notes_url(args)
@@ -127,12 +127,11 @@ module Motion
         # -s <private-EdDSA-key>  The private EdDSA string (128 characters). If not
         #                         specified, the private EdDSA key will be read from
         #                         the Keychain instead.
-        def private_eddsa_key(args)
-          if cli_options[:private_eddsa_key].present?
-            args << "-s=#{cli_options[:private_eddsa_key]}"
-          elsif use_exported_private_key && File.exist?(private_key_path)
-            private_key = File.read(private_key_path)
-            args << "-s=#{private_key}"
+        def private_ed_key_file(args)
+          if cli_options[:private_ed_key_file].present?
+            args << "--ed-key-file=#{cli_options[:private_ed_key_file]}"
+          elsif use_exported_private_key && File.exist?(@sparkle.private_key_path)
+            args << "--ed-key-file=#{@sparkle.private_key_path}"
           end
         end
 
