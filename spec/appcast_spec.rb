@@ -11,13 +11,13 @@ describe 'Appcast' do
     it 'defaults to empty' do
       args = @appcast.prepare_args
 
-      expect(args).to eq []
+      expect(args).to eq ['--account=ed25519']
     end
 
     it 'sets all command line options' do
       expected_results = [
         '--account=test1',
-        '-s=test2',
+        '--ed-key-file=test2',
         '--download-url-prefix=test3',
         '--release-notes-url-prefix=test4',
         '--full-release-notes-url=test5',
@@ -36,7 +36,7 @@ describe 'Appcast' do
       ]
 
       @appcast.process_option(:account, 'test1')
-      @appcast.process_option(:private_eddsa_key, 'test2')
+      @appcast.process_option(:private_ed_key_file, 'test2')
       @appcast.process_option(:download_url_prefix, 'test3')
       @appcast.process_option(:release_notes_url_prefix, 'test4')
       @appcast.process_option(:full_release_notes_url, 'test5')
