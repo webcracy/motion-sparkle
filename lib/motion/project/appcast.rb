@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
+# rubocop:disable-next Metrics/ClassLength
 module Motion
   module Project
     class Sparkle
@@ -65,7 +65,7 @@ module Motion
           @use_exported_private_key = false
         end
 
-        def process_option(key, value)
+        def process_option?(key, value)
           if CLI_OPTIONS.keys.include?(key)
             cli_options[key] = value
           elsif PARAMS.include?(key)
@@ -306,4 +306,3 @@ module Motion
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

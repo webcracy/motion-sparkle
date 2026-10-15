@@ -1,17 +1,21 @@
 # frozen_string_literal: true
 
+$:.unshift('/Library/RubyMotion/lib')
+$:.unshift(File.expand_path('~/.rubymotion/rubymotion-templates'))
+require 'pry-byebug'
 require 'rake'
-require 'pry'
 
 ROOT = Pathname.new(File.expand_path('..', __dir__))
-$:.unshift(ENV['RUBYMOTION_CHECKOUT'] || '/Library/RubyMotion/lib')
-$:.unshift("#{ROOT}lib".to_s)
 
 # need to ensure that we bypass the `app.pods` in `lib/motion-sparkle-sandbox.rb`
 @running_specs = 1
 
 require 'motion/project/template/osx'
 require 'motion-sparkle-sandbox'
+
+# activesupport 4.x uses BigDecimal.new which was removed in bigdecimal 3.0
+require 'bigdecimal'
+BigDecimal.singleton_class.define_method(:new) { |*a| BigDecimal(*a) } unless BigDecimal.respond_to?(:new)
 
 # necessary for us to be able to overwrite the `project_dir`
 module Motion

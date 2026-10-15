@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require File.expand_path('spec_utils', __dir__)
+require_relative 'spec_utils'
 
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 describe 'motion-sparkle-sandbox' do
   before(:all) do
     @config = App.config
@@ -108,4 +108,3 @@ describe 'motion-sparkle-sandbox' do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength

@@ -2,7 +2,7 @@
 
 module Motion
   module Project
-    # rubocop:disable Metrics/ClassLength
+    # rubocop:disable-next Metrics/ClassLength
     class Sparkle
       SPARKLE_ROOT = 'sparkle'
       CONFIG_PATH = "#{SPARKLE_ROOT}/config"
@@ -24,7 +24,7 @@ module Motion
       end
 
       def publish(key, value)
-        return if appcast.process_option(key, value)
+        return if appcast.process_option?(key, value)
 
         case key
         when :public_key
@@ -92,11 +92,11 @@ module Motion
         "#{vendored_sparkle_path}/bin/generate_keys"
       end
 
-      # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
+      # rubocop:disable-next Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
       def generate_keys
         return false unless config_ok?
 
-        FileUtils.mkdir_p sparkle_config_path unless File.exist?(sparkle_config_path)
+        FileUtils.mkdir_p sparkle_config_path
 
         if appcast.use_exported_private_key && File.exist?(private_key_path)
           App.info 'Sparkle', "Private key already exported at `#{private_key_path}` and will be used."
@@ -158,7 +158,6 @@ module Motion
         create_private_key
         export_private_key if appcast.use_exported_private_key
       end
-      # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
       # Create the private key in the keychain
       def create_private_key
@@ -228,7 +227,7 @@ module Motion
         appcast_filename = (path + appcast.feed_filename)
         appcast.cli_options[:output_path] = appcast_filename
 
-        FileUtils.mkdir_p(path) unless File.exist?(path)
+        FileUtils.mkdir_p(path)
 
         App.info('Sparkle', "Generating appcast using `#{generate_appcast_app}`")
         puts "from files in `#{path}`...".indent(11)
@@ -346,13 +345,12 @@ module Motion
       private
 
       def create_config_folder
-        FileUtils.mkdir_p(sparkle_config_path) unless File.exist?(sparkle_config_path)
+        FileUtils.mkdir_p(sparkle_config_path)
       end
 
       def create_release_folder
-        FileUtils.mkdir_p(sparkle_release_path) unless File.exist?(sparkle_release_path)
+        FileUtils.mkdir_p(sparkle_release_path)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

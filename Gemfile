@@ -2,9 +2,12 @@
 
 source 'https://rubygems.org'
 
-gem 'binding_of_caller'
-gem 'pry-byebug', '~> 3.9.0', platform: :mri
+gem 'bigdecimal'
 gem 'rake'
+
+#--- Development
+gem 'binding_of_caller'
+gem 'pry-byebug'
 
 gem 'rspec', '~> 3.0'
 

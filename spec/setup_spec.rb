@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require File.expand_path('spec_utils', __dir__)
+require_relative 'spec_utils'
 
 describe 'Sparkle setup' do
   before(:all) do

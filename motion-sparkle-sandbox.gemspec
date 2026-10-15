@@ -24,8 +24,8 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files`.split("\n")
-  spec.test_files    = Dir.glob('spec/**/*.rb')
   spec.require_paths = ['lib']
 
   spec.add_dependency 'motion-cocoapods'
+  spec.metadata['rubygems_mfa_required'] = 'true'
 end
