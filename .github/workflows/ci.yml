@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: bundle exec rubocop
+
+  macos:
+    runs-on: macos-latest
+    env:
+      RUBYMOTION_LICENSE: 1dcac45cc434293009f74b33037bdf7361a3a1ff # Official license key for open-source projects
+      TMP_DIR: ./tmp # For motion repo, so it doesn't attempt to use /tmp, to which it has no access
+      OBJC_DISABLE_INITIALIZE_FORK_SAFETY: 'YES'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install RubyMotion
+        run: |
+          curl -fsSL http://travisci.rubymotion.com/ -o RubyMotion-TravisCI.pkg
+          sudo installer -pkg RubyMotion-TravisCI.pkg -target /
+          mkdir -p ~/Library/RubyMotion/build
+          sudo motion activate "$RUBYMOTION_LICENSE"
+          sudo motion update
+          motion repo
+          if [ ! -d ~/.rubymotion/rubymotion-templates ]; then
+            git clone --depth 1 https://github.com/amirrajan/rubymotion-templates ~/.rubymotion/rubymotion-templates
+          fi
+          motion --version
+          ruby --version
+
+      - name: Cache CocoaPods specs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cocoapods/repos
+          key: cocoapods-${{ runner.os }}-${{ hashFiles('lib/motion-sparkle-sandbox.rb') }}
+          restore-keys: cocoapods-${{ runner.os }}-
+
+      - run: bundle exec rspec
